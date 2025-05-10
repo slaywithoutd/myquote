@@ -1,4 +1,4 @@
-# Boilerplate MVC em Node.js com PostgreSQL
+# MyQuote
 
 Este projeto é um boilerplate básico para uma aplicação Node.js seguindo o padrão MVC (Model-View-Controller), utilizando PostgreSQL como banco de dados.
 

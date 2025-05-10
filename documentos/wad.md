@@ -18,13 +18,11 @@
 
 ## <a name="c1"></a>1. Introdução (Semana 01)
 
-> O sistema a ser desenvolvido é uma aplicação web voltada para o registro, organização e consulta de frases marcantes, chamado Sequel. A proposta surgiu da motivação pessoal de coletar citações que despertam reflexões, inspiram ações ou simplesmente merecem ser guardadas. O sistema funciona como um acervo pessoal de frases, em que cada usuário pode cadastrar pensamentos, atribuí-los a autores e classificá-los por temas específicos.
+O sistema a ser desenvolvido é uma aplicação web voltada para o registro, organização e consulta de frases marcantes, chamado MyQuote. A proposta surgiu da motivação pessoal de coletar citações que despertam reflexões, inspiram ações ou simplesmente merecem ser guardadas. O sistema funciona como um acervo pessoal de frases, em que cada usuário pode cadastrar pensamentos, atribuí-los a autores e classificá-los por temas específicos.
 
-> A aplicação será construída utilizando Node.js com o framework Express.js, seguindo a arquitetura MVC (Model-View-Controller). A camada de visualização será renderizada com EJS, e o banco de dados será estruturado em PostgreSQL. A modelagem contempla entidades como usuários, frases (quotes), autores e tópicos (temas), permitindo relacionamentos ricos entre os dados, como a associação de uma frase a múltiplos tópicos.
+A aplicação será desenvolvida com Node.js e Express.js, utilizando a arquitetura MVC. A visualização será renderizada com EJS, e o banco de dados relacional será estruturado em PostgreSQL, com entidades como usuários, frases, autores e tópicos.
 
-> O principal objetivo é criar uma plataforma funcional e organizada para armazenar frases, incentivando o hábito da leitura crítica, da escrita e da curadoria pessoal de conteúdo textual. Além de oferecer uma interface amigável para o cadastro e consulta das frases, o sistema poderá futuramente incluir funcionalidades como “frase aleatória do dia”, filtros por autor ou tema, e sistema de favoritos.
-
-> Este projeto também busca consolidar os conhecimentos introdutórios em desenvolvimento web adquiridos durante o módulo, praticando conceitos como modularização de código, organização de arquivos, rotas, uso de templates e interação com banco de dados relacional.
+O objetivo é criar uma plataforma funcional para armazenar e organizar frases, incentivando a curadoria de conteúdo textual. O projeto também consolida os conhecimentos adquiridos em desenvolvimento web, como modularização, rotas e interação com banco de dados.
 
 ---
 
@@ -45,11 +43,11 @@ A arquitetura do sistema MyQuote (nome fictício, que lembra vagamente "MySQL") 
 
 ### 3.1. Modelagem do banco de dados 
 
-> A modelagem do banco de dados é o processo de criar uma representação estruturada das informações que serão armazenadas em um sistema de banco de dados. Este processo envolve a identificação das entidades principais, seus atributos e os relacionamentos entre elas, resultando em um esquema que serve como plano para a implementação física do banco de dados.
+A modelagem do banco de dados consiste em criar uma estrutura organizada para armazenar as informações essenciais do sistema MyQuote. Esse processo envolve identificar as principais entidades, como usuários, frases, autores e tópicos, além de definir seus atributos e os relacionamentos entre elas. O resultado é um esquema relacional que orienta a implementação do banco de dados, garantindo integridade, consistência e suporte às funcionalidades planejadas para a aplicação.
 
-> O modelo relacional do banco de dados da aplicação Sequel foi projetado para permitir que usuários cadastrem, organizem e associem frases a autores e tópicos temáticos. A estrutura do banco foi implementada usando PostgreSQL e segue os princípios de normalização para evitar redundâncias e garantir a integridade dos dados.
+O modelo relacional do banco de dados da aplicação MyQuote foi desenvolvido para possibilitar que os usuários registrem, organizem e associem frases a autores e temas específicos. A estrutura do banco de dados, implementada em PostgreSQL, foi projetada com base nos princípios de normalização, garantindo a eliminação de redundâncias e a manutenção da integridade dos dados.
 
-> O diagrama abaixo apresenta a estrutura completa do banco de dados com todas as tabelas e seus relacionamentos:
+O diagrama abaixo apresenta a estrutura completa do banco de dados com todas as tabelas e seus relacionamentos:
 
 Diagrama do banco no dbdiagram.io:
 <div align="center"> <sup>Figura 1 - Diagrama do Banco de Dados no dbdiagram.io</sup> <img src="/documentos/assets/myQuote.png"/> <sup>Fonte: Autoria própria, 2025</sup> </div>
