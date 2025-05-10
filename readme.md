@@ -1,11 +1,15 @@
 # MyQuote
 
-Este projeto é um boilerplate básico para uma aplicação Node.js seguindo o padrão MVC (Model-View-Controller), utilizando PostgreSQL como banco de dados.
+Este projeto é uma aplicação web para registro, organização e consulta de frases marcantes, desenvolvido utilizando Node.js com Express.js como framework e PostgreSQL como banco de dados relacional, seguindo o padrão MVC (Model-View-Controller).
+
+
+### Descrição do Projeto  
+A aplicação MyQuote é uma plataforma que funciona como um acervo pessoal de frases, permitindo que os usuários cadastrem pensamentos, atribuam-nos a autores e os classifiquem por temas específicos. O sistema foi projetado para facilitar a curadoria de conteúdo textual, incentivando a organização e o armazenamento de citações que inspiram, motivam ou merecem ser guardadas.
+
 
 ## Requisitos
-
-- Node.js (versão X.X.X)
-- PostgreSQL (versão X.X.X)
+Node.js (versão 14.x ou superior)
+PostgreSQL (versão 12.x ou superior)
 
 ## Instalação
 
@@ -46,11 +50,15 @@ Isso criará a tabela `users` no seu banco de dados PostgreSQL com UUID como cha
 Funcionalidades
 ---------------
 
-* **Padrão MVC:** Estrutura organizada em Model, View e Controller.
-* **PostgreSQL:** Banco de dados relacional utilizado para persistência dos dados.
-* **UUID:** Utilização de UUID como chave primária na tabela `users`.
-* **Scripts com `nodemon`:** Utilização do `nodemon` para reiniciar automaticamente o servidor após alterações no código.
-* **Testes:** Inclui estrutura básica para testes automatizados.
+Funcionalidades
+---------------
+
+* **Cadastro de Frases:** Permite que os usuários registrem frases marcantes, associando-as a autores e temas.
+* **Consulta de Frases:** Possibilita a busca e filtragem de frases por autor, tema ou palavras-chave.
+* **Organização por Temas:** Classificação das frases em categorias temáticas para facilitar a organização.
+* **Edição e Exclusão:** Funcionalidades para editar ou remover frases cadastradas.
+* **Autenticação de Usuários:** Sistema de login para garantir que apenas usuários autenticados possam gerenciar suas frases.
+* **Interface Amigável:** Design intuitivo para facilitar a navegação e o uso da aplicação.
 
 Scripts Disponíveis
 -------------------
@@ -70,10 +78,16 @@ Estrutura de Diretórios
 * **`tests/`**: Testes automatizados.
 * **`views/`**: Views da aplicação (se aplicável).
 
-Contribuição
-------------
 
-Contribuições são bem-vindas! Sinta-se à vontade para abrir um issue ou enviar um pull request.
+Modelo do Banco de Dados
+------------------------
+
+O banco de dados utiliza o PostgreSQL e possui as seguintes entidades principais:
+
+* **Users:** Armazena informações dos usuários, incluindo credenciais de login e dados pessoais.
+* **Quotes:** Armazena as frases cadastradas pelos usuários, associando-as a autores e temas.
+* **Authors:** Armazena informações sobre os autores das frases.
+* **Themes:** Representa os temas ou categorias atribuídos às frases.
 
 Licença
 -------
