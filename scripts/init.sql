@@ -1,11 +1,11 @@
 -- Habilita extensão necessária para gerar UUIDs aleatórios
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
-DROP TABLE users CASCADE;
-DROP TABLE authors CASCADE;
-DROP TABLE quotes CASCADE;
-DROP TABLE topics CASCADE;
-DROP TABLE quote_topic CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS authors CASCADE;
+DROP TABLE IF EXISTS quotes CASCADE;
+DROP TABLE IF EXISTS topics CASCADE;
+DROP TABLE IF EXISTS quote_topic CASCADE;
 
 -- Tabela de usuários
 CREATE TABLE users (
@@ -41,5 +41,5 @@ CREATE TABLE topics (
 CREATE TABLE quote_topic (
     quote_id UUID NOT NULL REFERENCES quotes(id),
     topic_id UUID NOT NULL REFERENCES topics(id),
-    PRIMARY KEY (quote_id, category_id)
+    PRIMARY KEY (quote_id, topic_id)
 );
