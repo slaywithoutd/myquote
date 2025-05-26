@@ -44,7 +44,7 @@ const create = async (req, res) => {
 const update = async (req, res) => {
   try {
     const {name} = req.body;
-    const updatedTopic = await topicModel.update(req.params.id, name);
+    const updatedTopic = await topicModel.update(req.params.id, { name });
     if (updatedTopic) {
       res.status(200).json(updatedTopic);
     } else {
@@ -57,7 +57,7 @@ const update = async (req, res) => {
 
 const deleteTopic = async (req, res) => {
   try {
-    const deletedTopic = await topicModel.deleteTopic(req.params.id);
+    const deletedTopic = await topicModel.delete(req.params.id);
     if (deletedTopic) {
       res.status(200).json(deletedTopic);
     } else {

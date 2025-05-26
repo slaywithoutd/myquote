@@ -1,8 +1,8 @@
-const authorModel = require('../models/authorModel');
+const Author = require('../models/authorModel');
 
 const getAll = async (req, res) => {
   try {
-    const authors = await authorModel.getAll();
+    const authors = await Author.getAll();
     res.status(200).json(authors);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -11,7 +11,7 @@ const getAll = async (req, res) => {
 
 const getById = async (req, res) => {
   try {
-    const author = await authorModel.getById(req.params.id);
+    const author = await Author.getById(req.params.id);
     if (author) {
       res.status(200).json(author);
     } else {
@@ -30,7 +30,7 @@ const create = async (req, res) => {
     
     try {
         const { name, nationality, bio } = req.body;
-        const newAuthor = await authorModel.create({ name, nationality, bio });
+        const newAuthor = await Author.create({ name, nationality, bio });
         if (!newAuthor) {
         return res.status(400).json({ error: 'Autor já existe ou dados inválidos' });
         }
@@ -44,7 +44,7 @@ const create = async (req, res) => {
 const update = async (req, res) => {
   try {
     const {name, nationality, bio} = req.body;
-    const updatedAuthor = await authorModel.update(req.params.id, {name, nationality, bio});
+    const updatedAuthor = await Author.update(req.params.id, {name, nationality, bio});
     if (updatedAuthor) {
       res.status(200).json(updatedAuthor);
     } else {
@@ -58,7 +58,7 @@ const update = async (req, res) => {
 
 const deleteAuthor = async (req, res) => {
   try {
-    const deletedAuthor = await authorModel.deleteAuthor(req.params.id);
+    const deletedAuthor = await Author.delete(req.params.id);
     if (deletedAuthor) {
       res.status(200).json(deletedAuthor);
     } else {
