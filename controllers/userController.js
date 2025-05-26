@@ -1,43 +1,49 @@
-// controllers/userController.js
+const userModel = require('../models/userModel');
 
-const userService = require('../services/userService');
-
-const getAllUsers = async (req, res) => {
+const getAll = async (req, res) => {
   try {
-    const users = await userService.getAllUsers();
+    const users = await userModel.getAll();
     res.status(200).json(users);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-const getUserById = async (req, res) => {
+const getById = async (req, res) => {
   try {
-    const user = await userService.getUserById(req.params.id);
+    const user = await userModel.getById(req.params.id);
     if (user) {
       res.status(200).json(user);
     } else {
-      res.status(404).json({ error: 'Usuário não encontrado' });
+      res.status(404).json({ error: 'Frase não encontrada' });
     }
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-const createUser = async (req, res) => {
+const create = async (req, res) => {
+  console.log('Received request to create quote:', req.body);
+  if (!req.body || !req.body.email || !req.body.password) {
+    return res.status(400).json({ error: 'Dados inválidos' });
+  }
+
   try {
-    const { name, email } = req.body;
-    const newUser = await userService.createUser(name, email);
+    const { username, email, password } = req.body;
+    const newUser = await userModel.create({username, email, password});
+    if (!newUser) {
+      return res.status(400).json({ error: 'Usuário já existe ou dados inválidos' });
+    }
     res.status(201).json(newUser);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-};
+}
 
-const updateUser = async (req, res) => {
+const update = async (req, res) => {
   try {
-    const { name, email } = req.body;
-    const updatedUser = await userService.updateUser(req.params.id, name, email);
+    const { username, email } = req.body;
+    const updatedUser = await userModel.update(req.params.id, {username, email});
     if (updatedUser) {
       res.status(200).json(updatedUser);
     } else {
@@ -50,21 +56,23 @@ const updateUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
   try {
-    const deletedUser = await userService.deleteUser(req.params.id);
+    const deletedUser = await userModel.deleteUser(req.params.id);
     if (deletedUser) {
       res.status(200).json(deletedUser);
+      console.log('Usuário deletado com sucesso');
     } else {
       res.status(404).json({ error: 'Usuário não encontrado' });
     }
   } catch (error) {
+    console.error('Error deleting user:', error);
     res.status(500).json({ error: error.message });
   }
 };
 
 module.exports = {
-  getAllUsers,
-  getUserById,
-  createUser,
-  updateUser,
+  getAll,
+  getById,
+  create,
+  update,
   deleteUser
 };

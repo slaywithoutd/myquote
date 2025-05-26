@@ -27,8 +27,10 @@ CREATE TABLE authors (
 CREATE TABLE quotes (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     text TEXT NOT NULL,
-    user_id UUID NOT NULL REFERENCES users(id),
-    author_id UUID NOT NULL REFERENCES authors(id)
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    author_id UUID REFERENCES authors(id) ON DELETE SET NULL
 );
 
 -- Tabela de tópicos
@@ -39,7 +41,7 @@ CREATE TABLE topics (
 
 -- Tabela de associação entre citações e tópicos
 CREATE TABLE quote_topic (
-    quote_id UUID NOT NULL REFERENCES quotes(id),
-    topic_id UUID NOT NULL REFERENCES topics(id),
+    quote_id UUID NOT NULL REFERENCES quotes(id) ON DELETE CASCADE,
+    topic_id UUID NOT NULL REFERENCES topics(id) ON DELETE CASCADE,
     PRIMARY KEY (quote_id, topic_id)
 );
