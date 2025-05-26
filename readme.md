@@ -50,14 +50,12 @@ Isso criará a tabela `users` no seu banco de dados PostgreSQL com UUID como cha
 Funcionalidades
 ---------------
 
-Funcionalidades
----------------
 
 * **Cadastro de Frases:** Permite que os usuários registrem frases marcantes, associando-as a autores e temas.
 * **Consulta de Frases:** Possibilita a busca e filtragem de frases por autor, tema ou palavras-chave.
 * **Organização por Temas:** Classificação das frases em categorias temáticas para facilitar a organização.
 * **Edição e Exclusão:** Funcionalidades para editar ou remover frases cadastradas.
-* **Autenticação de Usuários:** Sistema de login para garantir que apenas usuários autenticados possam gerenciar suas frases.
+* **Autenticação de Usuáros:** Sistema de login para garantir que apenas usuários autenticados possam gerenciar suas frases.
 * **Interface Amigável:** Design intuitivo para facilitar a navegação e o uso da aplicação.
 
 Scripts Disponíveis
