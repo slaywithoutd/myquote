@@ -13,48 +13,44 @@
                 </div>
                 <div class="card-body">
                     <% if (authors && authors.length > 0) { %>
-                        <div class="accordion" id="authorsAccordion">
+                        <div class="list-group">
                             <% authors.forEach(author => { %>
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header">
-                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#author<%= author.id %>" aria-expanded="false">
-                                            <div>
-                                                <strong><%= author.name %></strong>
-                                                <% if (author.nationality) { %>
-                                                    <small class="text-muted d-block"><%= author.nationality %></small>
-                                                <% } %>
-                                            </div>
-                                        </button>
-                                    </h2>
-                                    <div id="author<%= author.id %>" class="accordion-collapse collapse" data-bs-parent="#authorsAccordion">
-                                        <div class="accordion-body">
-                                            <% if (author.bio) { %>
-                                                <div class="mb-3">
-                                                    <h6>Biografia:</h6>
-                                                    <p class="text-muted"><%= author.bio %></p>
+                                <div class="list-group-item">
+                                    <div class="author-info">
+                                        <h5 class="mb-1"><%= author.name %></h5>
+                                        <% if (author.nationality) { %>
+                                            <small class="text-muted"><%= author.nationality %></small>
+                                        <% } %>
+                                    </div>
+                                    <% if (author.bio) { %>
+                                        <p class="mb-1 text-muted"><%= author.bio %></p>
+                                    <% } %>
+                                    <div class="quotes-container mt-3">
+                                        <h6>Frases:</h6>
+                                        <% if (author.quotes && author.quotes.length > 0) { %>
+                                            <% author.quotes.forEach(quote => { %>
+                                                <div class="card mb-2">
+                                                    <div class="card-body py-2">
+                                                        <p class="mb-0">"<%= quote.text %>"</p>
+                                                        <% if (quote.topics && quote.topics.length > 0) { %>
+                                                            <div class="mt-1">
+                                                                <% quote.topics.forEach(topic => { %>
+                                                                    <span class="badge bg-secondary me-1">#<%= topic.name %></span>
+                                                                <% }) %>
+                                                            </div>
+                                                        <% } %>
+                                                    </div>
                                                 </div>
-                                            <% } %>
-                                            
-                                            <div class="quotes-container" id="authorQuotes<%= author.id %>">
-                                                <h6>Frases:</h6>
-                                                <div class="quotes-list"></div>
-                                            </div>
-
-                                            <% if (typeof user !== 'undefined') { %>
-                                                <div class="mt-3">
-                                                    <a href="/authors/edit/<%= author.id %>" 
-                                                    class="btn btn-sm btn-secondary">
-                                                        Editar
-                                                    </a>
-                                                </div>
-                                            <% } %>
-                                        </div>
+                                            <% }) %>
+                                        <% } else { %>
+                                            <p class="text-muted">Nenhuma frase encontrada.</p>
+                                        <% } %>
                                     </div>
                                 </div>
                             <% }) %>
                         </div>
                     <% } else { %>
-                        <p class="mb-0">Nenhum autor cadastrado.</p>
+                        <p class="text-muted">Nenhum autor cadastrado.</p>
                     <% } %>
                 </div>
             </div>
@@ -71,73 +67,35 @@
                 </div>
                 <div class="card-body">
                     <% if (topics && topics.length > 0) { %>
-                        <div class="accordion" id="topicsAccordion">
+                        <div class="list-group">
                             <% topics.forEach(topic => { %>
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header">
-                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#topic<%= topic.id %>" aria-expanded="false">
-                                            <%= topic.name %>
-                                        </button>
-                                    </h2>
-                                    <div id="topic<%= topic.id %>" class="accordion-collapse collapse" data-bs-parent="#topicsAccordion">
-                                        <div class="accordion-body">
-                                            <div class="quotes-container" id="topicQuotes<%= topic.id %>">
-                                                <h6>Frases:</h6>
-                                                <div class="quotes-list"></div>
-                                            </div>
-
-                                            <% if (typeof user !== 'undefined') { %>
-                                                <div class="mt-3">
-                                                    <a href="/topics/edit/<%= topic.id %>"
-                                                    class="btn btn-sm btn-secondary">
-                                                        Editar
-                                                    </a>
+                                <div class="list-group-item">
+                                    <h5 class="mb-2"><%= topic.name %></h5>
+                                    <div class="quotes-container">
+                                        <h6>Frases:</h6>
+                                        <% if (topic.quotes && topic.quotes.length > 0) { %>
+                                            <% topic.quotes.forEach(quote => { %>
+                                                <div class="card mb-2">
+                                                    <div class="card-body py-2">
+                                                        <p class="mb-0">"<%= quote.text %>"</p>
+                                                        <footer class="blockquote-footer">
+                                                            - <%= quote.author.name %>
+                                                        </footer>
+                                                    </div>
                                                 </div>
-                                            <% } %>
-                                        </div>
+                                            <% }) %>
+                                        <% } else { %>
+                                            <p class="text-muted">Nenhuma frase encontrada.</p>
+                                        <% } %>
                                     </div>
                                 </div>
                             <% }) %>
                         </div>
                     <% } else { %>
-                        <p class="mb-0">Nenhum tópico cadastrado.</p>
+                        <p class="text-muted">Nenhum tópico cadastrado.</p>
                     <% } %>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<script>
-document.querySelectorAll('.accordion-button').forEach(button => {
-    button.addEventListener('click', async (e) => {
-        const target = e.target.closest('.accordion-button');
-        const contentId = target.getAttribute('data-bs-target');
-        const itemId = contentId.substring(contentId.indexOf('-') + 1);
-        const isAuthor = contentId.includes('author');
-        
-        if (target.getAttribute('aria-expanded') === 'false') {
-            try {
-                const response = await fetch(`/api/${isAuthor ? 'authors' : 'topics'}/${itemId}/quotes`);
-                if (!response.ok) throw new Error('Failed to fetch quotes');
-                
-                const quotes = await response.json();
-                const container = document.querySelector(`#${isAuthor ? 'authorQuotes' : 'topicQuotes'}${itemId} .quotes-list`);
-                
-                container.innerHTML = quotes.length ? quotes.map(quote => `
-                    <div class="card mb-2">
-                        <div class="card-body">
-                            <blockquote class="mb-0">
-                                <p>"${quote.text}"</p>
-                                ${isAuthor ? '' : `<footer class="blockquote-footer">- ${quote.author_name}</footer>`}
-                            </blockquote>
-                        </div>
-                    </div>
-                `).join('') : '<p class="text-muted">Nenhuma frase encontrada.</p>';
-            } catch (error) {
-                console.error('Error fetching quotes:', error);
-            }
-        }
-    });
-});
-</script>

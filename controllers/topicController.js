@@ -62,10 +62,21 @@ const deleteTopic = async (req, res) => {
   }
 };
 
+// Add this new method
+const getAllWithQuotes = async () => {
+    try {
+        const topics = await Topic.getAllWithQuotes();
+        return topics;
+    } catch (error) {
+        throw new Error('Error fetching topics with quotes: ' + error.message);
+    }
+}
+
 module.exports = {
   getAll,
   getById,
   create,
   update,
-  deleteTopic
+  deleteTopic,
+  getAllWithQuotes
 };

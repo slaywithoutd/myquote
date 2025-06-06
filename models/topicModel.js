@@ -69,6 +69,42 @@ class Topic {
       throw new Error('Error deleting topic: ' + error.message);
     }
   }
+
+  static async getAllWithQuotes() {
+    try {
+        const result = await db.query(`
+            SELECT 
+                t.id,
+                t.name,
+                COALESCE(
+                    ARRAY_AGG(
+                        DISTINCT jsonb_build_object(
+                            'id', q.id,
+                            'text', q.text,
+                            'created_at', q.created_at,
+                            'author', jsonb_build_object(
+                                'id', a.id,
+                                'name', a.name
+                            )
+                        )
+                    ) FILTER (WHERE q.id IS NOT NULL),
+                    '{}'::json[]
+                ) as quotes
+            FROM topics t
+            LEFT JOIN quote_topic qt ON qt.topic_id = t.id
+            LEFT JOIN quotes q ON qt.quote_id = q.id
+            LEFT JOIN authors a ON q.author_id = a.id
+            GROUP BY t.id, t.name
+            ORDER BY t.name ASC;
+        `);
+        
+        console.log('Query result:', result.rows);
+        return result.rows;
+    } catch (error) {
+        console.error('Database error:', error);
+        throw error;
+    }
+}
 }
 
 module.exports = Topic;

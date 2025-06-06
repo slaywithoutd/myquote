@@ -29,8 +29,8 @@ const create = async (req, res) => {
   }
 
   try {
-    const { text, description, username, authorname } = req.body;
-    const newQuote = await quoteModel.create({ text, description, username, authorname });
+    const { text, description, username, author_name } = req.body;
+    const newQuote = await quoteModel.create({ text, description, username, author_name });
     if (!newQuote) {
       return res.status(400).json({ error: 'Frase já existe ou dados inválidos' });
     }

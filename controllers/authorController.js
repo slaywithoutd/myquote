@@ -60,10 +60,24 @@ const deleteAuthor = async (req, res) => {
   }
 };
 
+// Add this new method
+const getAllWithQuotes = async (req, res) => {
+  try {
+    console.log('Getting authors with quotes from model...');
+    const authors = await Author.getAllWithQuotes();
+    console.log('Authors retrieved:', authors);
+    res.status(200).json(authors);
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ error: error.message });
+  }
+}
+
 module.exports = {
   getAll,
   getById,
   create,
   update,
-  deleteAuthor
+  deleteAuthor,
+  getAllWithQuotes
 };

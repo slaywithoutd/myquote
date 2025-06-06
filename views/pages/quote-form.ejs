@@ -5,7 +5,7 @@
     <div class="col-md-8 offset-md-2">
       <div class="card">
         <div class="card-body">
-          <h2 class="card-title"><%= quote ? 'Editar Frase' : 'Nova Frase' %></h2>
+          <h2 class="card-title">Nova Frase</h2>
 
           <form id="quoteForm">
             <div class="mb-3">
@@ -16,22 +16,24 @@
                 name="text" 
                 rows="3" 
                 required
-              ><%= quote ? quote.text : '' %></textarea>
+              ></textarea>
             </div>
 
             <div class="mb-3">
-              <label for="authorId" class="form-label">Autor</label>
-              <select class="form-select" id="authorId" name="authorId" required>
-                <option value="">Selecione um autor</option>
+              <label for="author_name" class="form-label">Autor</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="author_name" 
+                name="author_name" 
+                list="authorsList"
+                required
+              >
+              <datalist id="authorsList">
                 <% authors.forEach(author => { %>
-                  <option 
-                    value="<%= author.id %>"
-                    <%= quote && quote.authorId === author.id ? 'selected' : '' %>
-                  >
-                    <%= author.name %>
-                  </option>
+                  <option value="<%= author.name %>">
                 <% }); %>
-              </select>
+              </datalist>
             </div>
 
             <div class="mb-3">
@@ -46,7 +48,6 @@
                         name="topics"
                         value="<%= topic.id %>"
                         id="topic<%= topic.id %>"
-                        <%= quote && quote.topics && quote.topics.includes(topic.id) ? 'checked' : '' %>
                       >
                       <label class="form-check-label" for="topic<%= topic.id %>">
                         <%= topic.name %>
@@ -58,9 +59,7 @@
             </div>
 
             <div class="mb-3">
-              <button type="submit" class="btn btn-primary">
-                <%= quote ? 'Atualizar' : 'Criar' %> Frase
-              </button>
+              <button type="submit" class="btn btn-primary">Criar Frase</button>
               <a href="/" class="btn btn-secondary">Cancelar</a>
             </div>
           </form>
@@ -74,34 +73,57 @@
 document.getElementById('quoteForm').addEventListener('submit', async (e) => {
   e.preventDefault();
   
+  // Remove any existing error messages
+  const existingAlert = document.querySelector('.alert');
+  if (existingAlert) {
+    existingAlert.remove();
+  }
+
+  // Get and validate form data
+  const text = document.getElementById('text').value.trim();
+  const authorName = document.getElementById('author_name').value.trim();
+  
+  if (!text || !authorName) {
+    showError('Por favor, preencha todos os campos obrigatórios');
+    return;
+  }
+
   const formData = {
-    text: document.getElementById('text').value,
-    authorId: document.getElementById('authorId').value,
-    username: '<%= user.username %>', // Add the username from the session
+    text: text,
+    author_name: authorName,
+    username: '<%= user.username %>',
     topics: Array.from(document.querySelectorAll('input[name="topics"]:checked'))
       .map(cb => cb.value)
   };
 
+  console.log('Sending data:', formData); // Debug log
+
   try {
-    const url = '<%= quote ? `/api/quotes/${quote.id}` : "/api/quotes" %>';
-    const method = '<%= quote ? "PUT" : "POST" %>';
-    
-    const response = await fetch(url, {
-      method,
+    const response = await fetch('/api/quotes', {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(formData)
     });
 
+    const data = await response.json();
+
     if (!response.ok) {
-      const data = await response.json();
-      throw new Error(data.error || 'Erro ao salvar frase');
+      throw new Error(data.error || 'Erro ao criar frase');
     }
 
     window.location.href = '/';
   } catch (error) {
-    alert(error.message);
+    console.error('Error:', error);
+    showError(error.message);
   }
 });
+
+function showError(message) {
+  const alertDiv = document.createElement('div');
+  alertDiv.className = 'alert alert-danger mt-3';
+  alertDiv.textContent = message;
+  document.getElementById('quoteForm').insertBefore(alertDiv, document.querySelector('.mb-3'));
+}
 </script>

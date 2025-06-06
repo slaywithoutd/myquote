@@ -51,6 +51,52 @@ class Author {
       throw new Error('Error deleting author: ' + error.message);
     }
   }
+
+  static async getAllWithQuotes() {
+    try {
+      const result = await db.query(`
+            SELECT 
+                a.id,
+                a.name,
+                a.nationality,
+                a.bio,
+                COALESCE(
+                    ARRAY_AGG(
+                        DISTINCT jsonb_build_object(
+                            'id', q.id,
+                            'text', q.text,
+                            'created_at', q.created_at,
+                            'topics', (
+                                SELECT COALESCE(
+                                    json_agg(
+                                        jsonb_build_object(
+                                            'id', t.id,
+                                            'name', t.name
+                                        )
+                                    ),
+                                    '[]'::json
+                                )
+                                FROM quote_topic qt
+                                JOIN topics t ON qt.topic_id = t.id
+                                WHERE qt.quote_id = q.id
+                            )
+                        )
+                    ) FILTER (WHERE q.id IS NOT NULL),
+                    '{}'::json[]
+                ) as quotes
+            FROM authors a
+            LEFT JOIN quotes q ON q.author_id = a.id
+            GROUP BY a.id, a.name, a.nationality, a.bio
+            ORDER BY a.name ASC;
+        `);
+      
+      console.log('Query result:', result.rows);
+      return result.rows;
+    } catch (error) {
+      console.error('Database error:', error);
+      throw error;
+    }
+  }
 }
 
 module.exports = Author;
