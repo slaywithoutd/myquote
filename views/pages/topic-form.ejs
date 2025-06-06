@@ -1,0 +1,78 @@
+<%- include('../components/header') %>
+
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="card-title"><%= topic ? 'Editar Tópico' : 'Novo Tópico' %></h2>
+
+          <form id="topicForm">
+            <div class="mb-3">
+              <label for="name" class="form-label">Nome do Tópico</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="name" 
+                name="name" 
+                value="<%= topic ? topic.name : '' %>"
+                required
+              >
+            </div>
+
+            <div class="mb-3">
+              <button type="submit" class="btn btn-primary">
+                <%= topic ? 'Atualizar' : 'Criar' %> Tópico
+              </button>
+              <a href="/authors-topics" class="btn btn-secondary">Cancelar</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('topicForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  // Remove any existing error messages
+  const existingAlert = document.querySelector('.alert');
+  if (existingAlert) {
+    existingAlert.remove();
+  }
+
+  const formData = {
+    name: document.getElementById('name').value
+  };
+
+  try {
+    const url = '<%= topic ? `/api/topics/${topic.id}` : "/api/topics" %>';
+    const method = '<%= topic ? "PUT" : "POST" %>';
+    
+    const response = await fetch(url, {
+      method,
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(formData)
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Erro ao salvar tópico');
+    }
+
+    // Success - redirect to authors-topics page
+    window.location.href = '/authors-topics';
+  } catch (error) {
+    // Show error message in the form
+    const alertDiv = document.createElement('div');
+    alertDiv.className = 'alert alert-danger mt-3';
+    alertDiv.textContent = error.message;
+    document.getElementById('topicForm').insertBefore(alertDiv, document.querySelector('.mb-3'));
+  }
+});
+</script>

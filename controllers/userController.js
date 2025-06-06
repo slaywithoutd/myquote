@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const userModel = require('../models/userModel');
 
 const getAll = async (req, res) => {
@@ -23,7 +24,6 @@ const getById = async (req, res) => {
 };
 
 const create = async (req, res) => {
-  console.log('Received request to create quote:', req.body);
   if (!req.body || !req.body.email || !req.body.password) {
     return res.status(400).json({ error: 'Dados inválidos' });
   }
@@ -34,6 +34,7 @@ const create = async (req, res) => {
     if (!newUser) {
       return res.status(400).json({ error: 'Usuário já existe ou dados inválidos' });
     }
+    
     res.status(201).json(newUser);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -69,10 +70,43 @@ const deleteUser = async (req, res) => {
   }
 };
 
+// Add this new login method
+const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    
+    const user = await userModel.getByEmail(email);
+    if (!user) {
+      return res.status(401).json({ error: 'Email ou senha inválidos' });
+    }
+
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    if (!isValidPassword) {
+      return res.status(401).json({ error: 'Email ou senha inválidos' });
+    }
+
+    // Store user info in session
+    req.session.user = {
+      id: user.id,
+      username: user.username,
+      email: user.email
+    };
+    
+    res.status(200).json({ 
+      id: user.id,
+      username: user.username,
+      email: user.email
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 module.exports = {
   getAll,
   getById,
   create,
   update,
-  deleteUser
+  deleteUser,
+  login
 };

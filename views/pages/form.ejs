@@ -1,0 +1,66 @@
+ejs
+<%- include('../partials/header') %>
+
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="card-title text-center mb-4">Login</h2>
+          
+          <% if (typeof error !== 'undefined') { %>
+            <div class="alert alert-danger" role="alert">
+              <%= error %>
+            </div>
+          <% } %>
+
+          <form id="loginForm" method="POST" action="/api/login">
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+            <div class="mb-3">
+              <label for="password" class="form-label">Senha</label>
+              <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary">Entrar</button>
+            </div>
+          </form>
+
+          <div class="text-center mt-3">
+            <p>Ainda não tem conta? <a href="/register">Registre-se</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  try {
+    const response = await fetch('/api/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: document.getElementById('email').value,
+        password: document.getElementById('password').value
+      })
+    });
+
+    if (response.ok) {
+      window.location.href = '/';
+    } else {
+      const error = await response.json();
+      throw new Error(error.message);
+    }
+  } catch (error) {
+    alert(error.message);
+  }
+});
+</script>

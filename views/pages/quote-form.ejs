@@ -1,0 +1,107 @@
+<%- include('../components/header') %>
+
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="card-title"><%= quote ? 'Editar Frase' : 'Nova Frase' %></h2>
+
+          <form id="quoteForm">
+            <div class="mb-3">
+              <label for="text" class="form-label">Texto da Frase</label>
+              <textarea 
+                class="form-control" 
+                id="text" 
+                name="text" 
+                rows="3" 
+                required
+              ><%= quote ? quote.text : '' %></textarea>
+            </div>
+
+            <div class="mb-3">
+              <label for="authorId" class="form-label">Autor</label>
+              <select class="form-select" id="authorId" name="authorId" required>
+                <option value="">Selecione um autor</option>
+                <% authors.forEach(author => { %>
+                  <option 
+                    value="<%= author.id %>"
+                    <%= quote && quote.authorId === author.id ? 'selected' : '' %>
+                  >
+                    <%= author.name %>
+                  </option>
+                <% }); %>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Tópicos</label>
+              <div class="row">
+                <% topics.forEach(topic => { %>
+                  <div class="col-md-4">
+                    <div class="form-check">
+                      <input 
+                        class="form-check-input" 
+                        type="checkbox"
+                        name="topics"
+                        value="<%= topic.id %>"
+                        id="topic<%= topic.id %>"
+                        <%= quote && quote.topics && quote.topics.includes(topic.id) ? 'checked' : '' %>
+                      >
+                      <label class="form-check-label" for="topic<%= topic.id %>">
+                        <%= topic.name %>
+                      </label>
+                    </div>
+                  </div>
+                <% }); %>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <button type="submit" class="btn btn-primary">
+                <%= quote ? 'Atualizar' : 'Criar' %> Frase
+              </button>
+              <a href="/" class="btn btn-secondary">Cancelar</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('quoteForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const formData = {
+    text: document.getElementById('text').value,
+    authorId: document.getElementById('authorId').value,
+    username: '<%= user.username %>', // Add the username from the session
+    topics: Array.from(document.querySelectorAll('input[name="topics"]:checked'))
+      .map(cb => cb.value)
+  };
+
+  try {
+    const url = '<%= quote ? `/api/quotes/${quote.id}` : "/api/quotes" %>';
+    const method = '<%= quote ? "PUT" : "POST" %>';
+    
+    const response = await fetch(url, {
+      method,
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(formData)
+    });
+
+    if (!response.ok) {
+      const data = await response.json();
+      throw new Error(data.error || 'Erro ao salvar frase');
+    }
+
+    window.location.href = '/';
+  } catch (error) {
+    alert(error.message);
+  }
+});
+</script>

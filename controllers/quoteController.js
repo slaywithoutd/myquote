@@ -1,13 +1,13 @@
 const quoteModel = require('../models/quoteModel');
 
-const getAll = async (req, res) => {
+const getAll = async () => {
   try {
     const quotes = await quoteModel.getAll();
-    res.status(200).json(quotes);
+    return quotes;
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    throw new Error('Error fetching quotes: ' + error.message);
   }
-}
+};
 
 const getById = async (req, res) => {
   try {

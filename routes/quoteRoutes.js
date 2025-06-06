@@ -2,10 +2,11 @@
 const express = require('express');
 const router = express.Router();
 const quoteController = require('../controllers/quoteController');
+const authorModel = require('../models/authorModel');
+const topicModel = require('../models/topicModel');
 
-// Rotas para o CRUD de quotes
+// Other quote routes
 router.post('/', quoteController.create);
-router.get('/', quoteController.getAll);
 router.put('/:id', quoteController.update);
 router.delete('/:id', quoteController.deleteQuote);
 

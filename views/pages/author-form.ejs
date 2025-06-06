@@ -1,0 +1,89 @@
+<%- include('../components/header') %>
+
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="card-title"><%= author ? 'Editar Autor' : 'Novo Autor' %></h2>
+
+          <form id="authorForm">
+            <div class="mb-3">
+              <label for="name" class="form-label">Nome</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="name" 
+                name="name" 
+                value="<%= author ? author.name : '' %>"
+                required
+              >
+            </div>
+
+            <div class="mb-3">
+              <label for="nationality" class="form-label">Nacionalidade</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="nationality" 
+                name="nationality"
+                value="<%= author ? author.nationality : '' %>"
+              >
+            </div>
+
+            <div class="mb-3">
+              <label for="bio" class="form-label">Biografia</label>
+              <textarea 
+                class="form-control" 
+                id="bio" 
+                name="bio" 
+                rows="3"
+              ><%= author ? author.bio : '' %></textarea>
+            </div>
+
+            <div class="mb-3">
+              <button type="submit" class="btn btn-primary">
+                <%= author ? 'Atualizar' : 'Criar' %> Autor
+              </button>
+              <a href="/authors-topics" class="btn btn-secondary">Cancelar</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('authorForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const formData = {
+    name: document.getElementById('name').value,
+    nationality: document.getElementById('nationality').value,
+    bio: document.getElementById('bio').value
+  };
+
+  try {
+    const url = '<%= author ? `/api/authors/${author.id}` : "/api/authors" %>';
+    const method = '<%= author ? "PUT" : "POST" %>';
+    
+    const response = await fetch(url, {
+      method,
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(formData)
+    });
+
+    if (!response.ok) {
+      const data = await response.json();
+      throw new Error(data.error || 'Erro ao salvar autor');
+    }
+
+    window.location.href = '/authors-topics';
+  } catch (error) {
+    alert(error.message);
+  }
+});
+</script>

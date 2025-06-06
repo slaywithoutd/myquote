@@ -1,4 +1,5 @@
 const db = require('../config/db');
+const bcrypt = require('bcrypt');
 
 class User {
   static async getAll() {
@@ -12,11 +13,51 @@ class User {
   }
 
   static async create(data) {
-    const result = await db.query(
-      'INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING *',
-      [data.username, data.email, data.password]
-    );
-    return result.rows[0];
+    let client;
+    try {
+      client = await db.connect();
+      await client.query('BEGIN');
+
+      if (!data || !data.username || !data.email || !data.password) {
+        throw new Error('Dados inválidos');
+      }
+
+      const saltRounds = 10;
+      data.password = await bcrypt.hash(data.password, saltRounds);
+
+      // Check if email exists
+      const existingUser = await client.query(
+        'SELECT * FROM users WHERE email = $1',
+        [data.email]
+      );
+      if (existingUser.rows.length > 0) {
+        throw new Error('Email já cadastrado');
+      }
+
+      // Check if username exists
+      const existingUsername = await client.query(
+        'SELECT * FROM users WHERE username = $1',
+        [data.username]
+      );
+      if (existingUsername.rows.length > 0) {
+        throw new Error('Nome de usuário já existe');
+      }
+
+      // Create user
+      const result = await client.query(
+        'INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING *',
+        [data.username, data.email, data.password]
+      );
+
+      await client.query('COMMIT');
+      return result.rows[0];
+
+    } catch (error) {
+      if (client) await client.query('ROLLBACK');
+      throw error;
+    } finally {
+      if (client) client.release();
+    }
   }
 
   static async update(id, data) {
@@ -30,6 +71,11 @@ class User {
   static async deleteUser(id) {
     const result = await db.query('DELETE FROM users WHERE id = $1 RETURNING *', [id]);
     return result.rowCount > 0;
+  }
+
+  static async getByEmail(email) {
+    const result = await db.query('SELECT * FROM users WHERE email = $1', [email]);
+    return result.rows[0];
   }
 }
 

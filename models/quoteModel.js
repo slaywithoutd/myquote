@@ -2,25 +2,25 @@ const db = require("../config/db");
 
 class Quote {
   static async getAll() {
-    const result = await db.query("SELECT * FROM quotes");
-    return result.rows;
+    try {
+      const result = await db.query(`
+        SELECT 
+          q.*,
+          a.name as author_name
+        FROM quotes q
+        LEFT JOIN authors a ON q.author_id = a.id
+        ORDER BY q.created_at DESC
+      `);
+      return result.rows;
+    } catch (error) {
+      throw new Error('Error fetching quotes: ' + error.message);
+    }
   }
 
   static async getById(id) {
     const result = await db.query("SELECT * FROM quotes WHERE id = $1", [id]);
     return result.rows[0];
   }
-
-  /*
-CREATE TABLE quotes (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      text TEXT NOT NULL,
-      description TEXT,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      user_id UUID NOT NULL REFERENCES users(id),
-      author_id UUID NOT NULL REFERENCES authors(id)
-  
-*/
 
   static async create(data) {
     const userId = await db.query("SELECT id FROM users WHERE username = $1", [
@@ -76,6 +76,43 @@ CREATE TABLE quotes (
       [id]
     );
     return result.rowCount > 0;
+  }
+
+  static async getByAuthor(authorId) {
+    try {
+      const result = await db.query(
+        `SELECT q.*, a.name as author_name, 
+          json_agg(json_build_object('id', t.id, 'name', t.name)) as topics
+         FROM quotes q
+         JOIN authors a ON q.author_id = a.id
+         LEFT JOIN quote_topics qt ON q.id = qt.quote_id
+         LEFT JOIN topics t ON qt.topic_id = t.id
+         WHERE q.author_id = $1
+         GROUP BY q.id, a.name
+         ORDER BY q.created_at DESC`,
+        [authorId]
+      );
+      return result.rows;
+    } catch (error) {
+      throw new Error('Error fetching quotes by author: ' + error.message);
+    }
+  }
+
+  static async getByTopic(topicId) {
+    try {
+      const result = await db.query(
+        `SELECT q.*, a.name as author_name
+         FROM quotes q
+         JOIN authors a ON q.author_id = a.id
+         JOIN quote_topics qt ON q.id = qt.quote_id
+         WHERE qt.topic_id = $1
+         ORDER BY q.created_at DESC`,
+        [topicId]
+      );
+      return result.rows;
+    } catch (error) {
+      throw new Error('Error fetching quotes by topic: ' + error.message);
+    }
   }
 }
 

@@ -1,0 +1,143 @@
+<%- include('../components/header') %>
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- Authors Section -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h2 class="h4 mb-0">Autores</h2>
+                    <% if (typeof user !== 'undefined') { %>
+                        <a href="/authors/new" class="btn btn-primary btn-sm">Novo Autor</a>
+                    <% } %>
+                </div>
+                <div class="card-body">
+                    <% if (authors && authors.length > 0) { %>
+                        <div class="accordion" id="authorsAccordion">
+                            <% authors.forEach(author => { %>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#author<%= author.id %>" aria-expanded="false">
+                                            <div>
+                                                <strong><%= author.name %></strong>
+                                                <% if (author.nationality) { %>
+                                                    <small class="text-muted d-block"><%= author.nationality %></small>
+                                                <% } %>
+                                            </div>
+                                        </button>
+                                    </h2>
+                                    <div id="author<%= author.id %>" class="accordion-collapse collapse" data-bs-parent="#authorsAccordion">
+                                        <div class="accordion-body">
+                                            <% if (author.bio) { %>
+                                                <div class="mb-3">
+                                                    <h6>Biografia:</h6>
+                                                    <p class="text-muted"><%= author.bio %></p>
+                                                </div>
+                                            <% } %>
+                                            
+                                            <div class="quotes-container" id="authorQuotes<%= author.id %>">
+                                                <h6>Frases:</h6>
+                                                <div class="quotes-list"></div>
+                                            </div>
+
+                                            <% if (typeof user !== 'undefined') { %>
+                                                <div class="mt-3">
+                                                    <a href="/authors/edit/<%= author.id %>" 
+                                                    class="btn btn-sm btn-secondary">
+                                                        Editar
+                                                    </a>
+                                                </div>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }) %>
+                        </div>
+                    <% } else { %>
+                        <p class="mb-0">Nenhum autor cadastrado.</p>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+
+        <!-- Topics Section -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h2 class="h4 mb-0">Tópicos</h2>
+                    <% if (typeof user !== 'undefined') { %>
+                        <a href="/topics/new" class="btn btn-primary btn-sm">Novo Tópico</a>
+                    <% } %>
+                </div>
+                <div class="card-body">
+                    <% if (topics && topics.length > 0) { %>
+                        <div class="accordion" id="topicsAccordion">
+                            <% topics.forEach(topic => { %>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#topic<%= topic.id %>" aria-expanded="false">
+                                            <%= topic.name %>
+                                        </button>
+                                    </h2>
+                                    <div id="topic<%= topic.id %>" class="accordion-collapse collapse" data-bs-parent="#topicsAccordion">
+                                        <div class="accordion-body">
+                                            <div class="quotes-container" id="topicQuotes<%= topic.id %>">
+                                                <h6>Frases:</h6>
+                                                <div class="quotes-list"></div>
+                                            </div>
+
+                                            <% if (typeof user !== 'undefined') { %>
+                                                <div class="mt-3">
+                                                    <a href="/topics/edit/<%= topic.id %>"
+                                                    class="btn btn-sm btn-secondary">
+                                                        Editar
+                                                    </a>
+                                                </div>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }) %>
+                        </div>
+                    <% } else { %>
+                        <p class="mb-0">Nenhum tópico cadastrado.</p>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.querySelectorAll('.accordion-button').forEach(button => {
+    button.addEventListener('click', async (e) => {
+        const target = e.target.closest('.accordion-button');
+        const contentId = target.getAttribute('data-bs-target');
+        const itemId = contentId.substring(contentId.indexOf('-') + 1);
+        const isAuthor = contentId.includes('author');
+        
+        if (target.getAttribute('aria-expanded') === 'false') {
+            try {
+                const response = await fetch(`/api/${isAuthor ? 'authors' : 'topics'}/${itemId}/quotes`);
+                if (!response.ok) throw new Error('Failed to fetch quotes');
+                
+                const quotes = await response.json();
+                const container = document.querySelector(`#${isAuthor ? 'authorQuotes' : 'topicQuotes'}${itemId} .quotes-list`);
+                
+                container.innerHTML = quotes.length ? quotes.map(quote => `
+                    <div class="card mb-2">
+                        <div class="card-body">
+                            <blockquote class="mb-0">
+                                <p>"${quote.text}"</p>
+                                ${isAuthor ? '' : `<footer class="blockquote-footer">- ${quote.author_name}</footer>`}
+                            </blockquote>
+                        </div>
+                    </div>
+                `).join('') : '<p class="text-muted">Nenhuma frase encontrada.</p>';
+            } catch (error) {
+                console.error('Error fetching quotes:', error);
+            }
+        }
+    });
+});
+</script>

@@ -1,4 +1,4 @@
-const topicModel = require('../models/topicModel');
+const Topic = require('../models/topicModel');
 
 const getAll = async (req, res) => {
   try {
@@ -23,35 +23,29 @@ const getById = async (req, res) => {
 };
 
 const create = async (req, res) => {
-    console.log('Received request to create topic:', req.body);
-    if (!req.body || !req.body.name) {
-        return res.status(400).json({ error: 'Dados inválidos' });
-    }
-    
-    try {
-        const { name, description } = req.body;
-        const newTopic = await topicModel.create({ name, description });
-        if (!newTopic) {
-        return res.status(400).json({ error: 'Tópico já existe ou dados inválidos' });
-        }
-        res.status(201).json(newTopic);
-    } catch (error) {
-        console.error('Error creating topic:', error);
-        res.status(500).json({ error: error.message });
-    }
-    }
+  try {
+    const topic = await Topic.create(req.body);
+    res.status(201).json(topic);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
 const update = async (req, res) => {
   try {
-    const {name} = req.body;
-    const updatedTopic = await topicModel.update(req.params.id, { name });
-    if (updatedTopic) {
-      res.status(200).json(updatedTopic);
-    } else {
-      res.status(404).json({ error: 'Tópico não encontrado' });
+    const { name } = req.body;
+    const id = req.params.id;
+    
+    const existingTopic = await Topic.getById(id);
+    if (!existingTopic) {
+      return res.status(404).json({ error: 'Tópico não encontrado' });
     }
+
+    const updatedTopic = await Topic.update(id, { name });
+    res.status(200).json(updatedTopic);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Error updating topic:', error);
+    res.status(500).json({ error: 'Erro ao atualizar tópico' });
   }
 };
 

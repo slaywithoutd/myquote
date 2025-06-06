@@ -1,0 +1,96 @@
+<%- include('../components/header') %>
+
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="card-title text-center mb-4">Login</h2>
+
+          <% if (typeof error !== 'undefined') { %>
+            <div class="alert alert-danger" role="alert">
+              <%= error %>
+            </div>
+          <% } %>
+
+          <form id="loginForm" class="needs-validation" novalidate>
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input 
+                type="email" 
+                class="form-control" 
+                id="email" 
+                name="email" 
+                required
+              >
+              <div class="invalid-feedback">
+                Por favor, insira um email válido.
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="password" class="form-label">Senha</label>
+              <input 
+                type="password" 
+                class="form-control" 
+                id="password" 
+                name="password" 
+                required 
+                minlength="8"
+              >
+              <div class="invalid-feedback">
+                Por favor, insira sua senha.
+              </div>
+            </div>
+
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-primary">Entrar</button>
+              <a href="/register" class="btn btn-link text-center">Não tem uma conta? Registre-se</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  // Form validation
+  const form = e.target;
+  if (!form.checkValidity()) {
+    e.stopPropagation();
+    form.classList.add('was-validated');
+    return;
+  }
+
+  try {
+    const response = await fetch('/api/users/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: document.getElementById('email').value,
+        password: document.getElementById('password').value
+      })
+    });
+
+    if (!response.ok) {
+      const data = await response.json();
+      throw new Error(data.error || 'Email ou senha inválidos');
+    }
+
+    // Redirect to home page on success
+    window.location.href = '/';
+  } catch (error) {
+    // Show error message
+    const alertDiv = document.createElement('div');
+    alertDiv.className = 'alert alert-danger mt-3';
+    alertDiv.textContent = error.message;
+    form.insertBefore(alertDiv, form.firstChild);
+  }
+});
+</script>

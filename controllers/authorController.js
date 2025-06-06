@@ -5,6 +5,7 @@ const getAll = async (req, res) => {
     const authors = await Author.getAll();
     res.status(200).json(authors);
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error: error.message });
   }
 };
@@ -23,23 +24,13 @@ const getById = async (req, res) => {
 };
 
 const create = async (req, res) => {
-    console.log('Received request to create author:', req.body);
-    if (!req.body || !req.body.name) {
-        return res.status(400).json({ error: 'Dados inválidos' });
-    }
-    
-    try {
-        const { name, nationality, bio } = req.body;
-        const newAuthor = await Author.create({ name, nationality, bio });
-        if (!newAuthor) {
-        return res.status(400).json({ error: 'Autor já existe ou dados inválidos' });
-        }
-        res.status(201).json(newAuthor);
-    } catch (error) {
-        console.error('Error creating author:', error);
-        res.status(500).json({ error: error.message });
-    }
-    }
+  try {
+    const author = await Author.create(req.body);
+    res.status(201).json(author);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
 const update = async (req, res) => {
   try {

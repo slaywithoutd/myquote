@@ -1,0 +1,48 @@
+<%- include('../components/header') %>
+
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-8">
+      <h2 class="mb-4">Frases Recentes</h2>
+      <% if (quotes && quotes.length > 0) { %>
+        <div class="quotes-list">
+          <% quotes.forEach(quote => { %>
+            <div class="card mb-3">
+              <div class="card-body">
+                <blockquote class="mb-0">
+                  <p>"<%= quote.text %>" - <%= quote.author_name %></p>
+                  <% if (quote.topics && quote.topics.length > 0) { %>
+                    <div class="mt-2">
+                      <% quote.topics.forEach(topic => { %>
+                        <span class="badge bg-secondary me-1">#<%= topic.name %></span>
+                      <% }) %>
+                    </div>
+                  <% } %>
+                </blockquote>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      <% } else { %>
+        <p>Nenhuma frase cadastrada ainda.</p>
+      <% } %>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-body">
+          <h3 class="h5 card-title">Tópicos</h3>
+          <% if (topics && topics.length > 0) { %>
+            <div class="d-flex flex-wrap gap-2">
+              <% topics.forEach(topic => { %>
+                <span class="badge bg-secondary"><%= topic.name %></span>
+              <% }) %>
+            </div>
+          <% } else { %>
+            <p class="mb-0">Nenhum tópico cadastrado.</p>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
