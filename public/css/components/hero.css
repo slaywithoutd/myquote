@@ -1,0 +1,20 @@
+body .hero {
+    width: 100%;
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+
+    /* Estilo de fundo */
+    background-color: var(--background);
+    background-image: radial-gradient(circle at center, var(--surface) 0%, var(--background) 70%);
+}
+
+.hero-content {
+    max-width: 800px;
+    animation: fadeInUp 1s ease-out forwards;
+}

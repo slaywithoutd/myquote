@@ -8,6 +8,7 @@
 @import './components/cards.css';
 @import './components/forms.css';
 @import './components/navigation.css';
+@import './components/hero.css';
 
 /* Pages */
 @import './pages/auth.css';
