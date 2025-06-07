@@ -59,6 +59,17 @@
             </div>
 
             <div class="mb-3">
+              <label for="description" class="form-label">Descrição</label>
+              <textarea 
+                class="form-control" 
+                id="description" 
+                name="description" 
+                rows="2" 
+                placeholder="Adicione uma breve descrição para a frase (opcional)"
+              ></textarea>
+            </div>
+
+            <div class="mb-3">
               <button type="submit" class="btn btn-primary">Criar Frase</button>
               <a href="/" class="btn btn-secondary">Cancelar</a>
             </div>
@@ -71,59 +82,61 @@
 
 <script>
 document.getElementById('quoteForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  
-  // Remove any existing error messages
-  const existingAlert = document.querySelector('.alert');
-  if (existingAlert) {
-    existingAlert.remove();
-  }
-
-  // Get and validate form data
-  const text = document.getElementById('text').value.trim();
-  const authorName = document.getElementById('author_name').value.trim();
-  
-  if (!text || !authorName) {
-    showError('Por favor, preencha todos os campos obrigatórios');
-    return;
-  }
-
-  const formData = {
-    text: text,
-    author_name: authorName,
-    username: '<%= user.username %>',
-    topics: Array.from(document.querySelectorAll('input[name="topics"]:checked'))
-      .map(cb => cb.value)
-  };
-
-  console.log('Sending data:', formData); // Debug log
-
-  try {
-    const response = await fetch('/api/quotes', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(formData)
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.error || 'Erro ao criar frase');
+    e.preventDefault();
+    
+    // Remove any existing error messages
+    const existingAlert = document.querySelector('.alert');
+    if (existingAlert) {
+        existingAlert.remove();
     }
 
-    window.location.href = '/';
-  } catch (error) {
-    console.error('Error:', error);
-    showError(error.message);
-  }
+    // Get and validate form data
+    const text = document.getElementById('text').value.trim();
+    const authorName = document.getElementById('author_name').value.trim();
+    const description = document.getElementById('description').value.trim(); // Novo campo
+
+    if (!text || !authorName) {
+        showError('Por favor, preencha todos os campos obrigatórios');
+        return;
+    }
+
+    const formData = {
+        text: text,
+        description: description, // Inclua a descrição
+        author_name: authorName,
+        username: '<%= user.username %>',
+        topics: Array.from(document.querySelectorAll('input[name="topics"]:checked'))
+            .map(cb => cb.value)
+    };
+
+    console.log('Sending data:', formData); // Debug log
+
+    try {
+        const response = await fetch('/api/quotes', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || 'Erro ao criar frase');
+        }
+
+        window.location.href = '/';
+    } catch (error) {
+        console.error('Error:', error);
+        showError(error.message);
+    }
 });
 
 function showError(message) {
-  const alertDiv = document.createElement('div');
-  alertDiv.className = 'alert alert-danger mt-3';
-  alertDiv.textContent = message;
-  document.getElementById('quoteForm').insertBefore(alertDiv, document.querySelector('.mb-3'));
+    const alert = document.createElement('div');
+    alert.className = 'alert alert-danger';
+    alert.textContent = message;
+    document.body.prepend(alert);
 }
 </script>

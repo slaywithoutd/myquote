@@ -3,7 +3,6 @@ const db = require("../config/db");
 class Quote {
   static async getAll() {
     try {
-      console.log('Fetching quotes with authors...');
       const result = await db.query(`
         SELECT 
           q.*,
@@ -85,19 +84,19 @@ class Quote {
 
       // Create quote
       const quoteResult = await client.query(
-        "INSERT INTO quotes (text, user_id, author_id) VALUES ($1, $2, $3) RETURNING *",
-        [data.text, user_id, author_id]
+        "INSERT INTO quotes (text, description, user_id, author_id) VALUES ($1, $2, $3, $4) RETURNING *",
+        [data.text, data.description || null, user_id, author_id]
       );
 
       const quote_id = quoteResult.rows[0].id;
 
-      // Add topics if any
       if (data.topics && data.topics.length > 0) {
         const topicValues = data.topics.map(topic_id => 
-          `(${quote_id}, ${topic_id})`
+          `('${quote_id}', '${topic_id}')`
         ).join(', ');
-        
+
         if (topicValues) {
+          console.log(topicValues); // Debug log
           await client.query(`
             INSERT INTO quote_topic (quote_id, topic_id) 
             VALUES ${topicValues}

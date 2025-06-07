@@ -4,7 +4,11 @@
         <p class="hero-subheadline">
             Um espaço para guardar a sabedoria que importa. Capture e organize suas citações favoritas.
         </p>
-        <a href="/register" class="btn btn-primary hero-cta">Fundar minha biblioteca</a>
+        <% if (user) { %>
+            <a href="/quotes/new" class="btn btn-primary hero-cta">Adicionar Frase</a>
+        <% } else { %>
+            <a href="/register" class="btn btn-primary hero-cta">Fundar minha biblioteca</a>
+        <% } %>
 
         <div class="hero-divider">
             <svg xmlns="http://www.w3.org/2000/svg" width="100" height="20" viewBox="0 0 100 20" fill="none">
