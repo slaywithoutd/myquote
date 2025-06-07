@@ -1,0 +1,40 @@
+.card {
+  background-color: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.card-body {
+  padding: 1.25rem;
+}
+
+.card-title {
+  margin-bottom: 0.75rem;
+  font-size: 1.25rem;
+}
+
+.quote-card {
+  margin-bottom: 1rem;
+}
+
+.quote-card blockquote {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.quote-card .quote-author {
+  font-style: normal;
+  color: var(--text-secondary);
+  margin-top: 0.5rem;
+}
+
+.quote-card .quote-topics {
+  margin-top: 0.75rem;
+}
+
+.quote-card .quote-actions {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.5rem;
+}

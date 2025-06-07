@@ -15,11 +15,13 @@ const topicModel = require('./models/topicModel');
 const quoteModel = require('./models/quoteModel');
 const quoteController = require('./controllers/quoteController');
 const authorController = require('./controllers/authorController');
+const ejsMate = require('ejs-mate'); // Importe o ejs-mate
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Configurações do EJS
+// Configure o EJS-Mate como motor de visualização
+app.engine('ejs', ejsMate);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
@@ -29,6 +31,10 @@ app.use(session({
     resave: false,
     saveUninitialized: false
 }));
+
+// Configuração para servir arquivos estáticos
+app.use(express.static(path.join(__dirname, 'public')));
+console.log('Static directory path:', path.join(__dirname, 'public'));
 
 // Middlewares
 app.use(cors());
@@ -56,7 +62,7 @@ app.get('/', async (req, res) => {
     const topics = await topicModel.getAll();
     
     res.render('pages/index', { 
-      pageTitle: 'Home',
+      pageTitle: 'Home', // Adicione esta linha
       quotes: quotes || [], 
       topics: topics || [],
       user: req.session.user || undefined,
@@ -65,7 +71,7 @@ app.get('/', async (req, res) => {
   } catch (error) {
     console.error('Error loading home page:', error);
     res.render('pages/index', {
-      pageTitle: 'Home',
+      pageTitle: 'Home', // Adicione esta linha
       quotes: [],
       topics: [],
       user: req.session.user || undefined,
@@ -83,29 +89,35 @@ app.get('/authors-topics', async (req, res) => {
     try {
         const authors = await authorModel.getAll();
         const topics = await topicModel.getAll();
-        
-        res.render('pages/authors-topics', {
-            authors,
-            topics,
-            user: req.session.user,
-            error: null
+        res.render('pages/authors-topics', { 
+          pageTitle: 'Autores & Tópicos', // Adicione esta linha
+          authors, 
+          topics, 
+          user: req.session.user 
         });
     } catch (error) {
       console.error('Error loading authors and topics:', error);
-        res.status(500).render('pages/error', {
-            error: 'Erro ao carregar autores e tópicos',
-            user: req.session.user
+        res.status(500).render('pages/error', { 
+          pageTitle: 'Erro', // Adicione esta linha
+          error: 'Erro ao carregar autores e tópicos',
+          user: req.session.user 
         });
     }
 });
 
 // Page routes
 app.get('/login', (req, res) => {
-  res.render('pages/login', { error: null });
+  res.render('pages/login', { 
+    pageTitle: 'Login', // Adicione esta linha
+    error: null 
+  });
 });
 
 app.get('/register', (req, res) => {
-  res.render('pages/register', { error: null });
+  res.render('pages/register', { 
+    pageTitle: 'Registrar', // Adicione esta linha
+    error: null 
+  });
 });
 
 app.get('/authors-topics', async (req, res) => {

@@ -1,3 +1,37 @@
+/* Base */
+@import './base/variables.css';
+@import './base/reset.css';
+@import './base/typography.css';
+
+/* Components */
+@import './components/buttons.css';
+@import './components/cards.css';
+@import './components/forms.css';
+@import './components/navigation.css';
+
+/* Pages */
+@import './pages/auth.css';
+@import './pages/profile.css';
+
+/* Utility classes */
+.container {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.mt-4 {
+  margin-top: 2rem;
+}
+
+.mb-4 {
+  margin-bottom: 2rem;
+}
+
+.text-center {
+  text-align: center;
+}
+
 /* Reset básico para remover estilos padrão do navegador */
 * {
     margin: 0;
@@ -57,4 +91,3 @@
     bottom: 0;
     width: 100%;
   }
-  
