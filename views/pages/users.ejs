@@ -28,22 +28,8 @@
       <% if (userQuotes && userQuotes.length > 0) { %>
         <div class="quotes-list">
           <% userQuotes.forEach(quote => { %>
-            <div class="card mb-3">
-              <div class="card-body">
-                <blockquote class="mb-0">
-                  <p><%= quote.text %></p>
-                  <footer class="blockquote-footer">
-                    <%= quote.author_name %>
-                  </footer>
-                </blockquote>
-
-                <% if (quote.topics && quote.topics.length > 0) { %>
-                  <div class="mt-2">
-                    <% quote.topics.forEach(topic => { %>
-                      <span class="badge bg-secondary me-1"><%= topic.name %></span>
-                    <% }) %>
-                  </div>
-                <% } %>
+            <%- include('../partials/_quote_card', { quote: quote }) %>
+          <% }) %>
 
                 <div class="mt-3">
                   <a href="/quotes/edit/<%= quote.id %>" class="btn btn-sm btn-secondary">Editar</a>

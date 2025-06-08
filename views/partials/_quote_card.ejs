@@ -1,0 +1,36 @@
+<!-- Quote Card Component with Horizontal Layout and Geometric Topic Indicators -->
+<div class="quote-card">
+  <!-- Geometric Topic Indicators in Top Right Corner -->
+  <% if (quote.topics && quote.topics.length > 0) { %>
+    <div class="topic-geometric-indicators">
+      <% quote.topics.forEach((topic, index) => { %>
+        <div class="geometric-shape" data-topic="<%= topic.name %>" data-topic-id="<%= topic.id || index %>">
+          <div class="shape-inner"></div>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+
+  <div class="quote-content">
+    <div class="quote-text">
+      <%= quote.text.replace(/[""]/g, '') %>
+    </div>
+
+    <% if (quote.description && quote.description.trim() !== '') { %>
+      <div class="quote-description">
+        <%= quote.description %>
+      </div>
+    <% } %>
+
+    <div class="quote-author">— <%= quote.author_name %></div>
+  </div>
+
+  <!-- Traditional badges kept for reference/fallback -->
+  <% if (quote.topics && quote.topics.length > 0) { %>
+    <div class="quote-topics traditional-badges" style="display: none;">
+      <% quote.topics.forEach(topic => { %>
+        <span class="badge bg-secondary"><%= topic.name %></span>
+      <% }) %>
+    </div>
+  <% } %>
+</div>

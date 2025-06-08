@@ -1,32 +1,66 @@
-@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Lora:wght@400;700&display=swap');
+/* Dark Academia Typography Imports */
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Source+Sans+Pro:wght@300;400;600;700&family=Source+Code+Pro:wght@400;500&display=swap');
 
 :root {
-  /* Cores principais */
-  --background: #f8f9fa;
-  --surface: #ffffff;
-  --primary: #0d6efd;
-  --primary-hover: #0b5ed7;
-  --secondary: #6c757d;
-  --secondary-hover: #5c636a;
-  --danger: #dc3545;
-  --success: #198754;
-  
-  /* Cores de texto */
-  --text-primary: #212529;
-  --text-secondary: #6c757d;
-  --text-light: #f8f9fa;
-  
-  /* Cores de borda */
-  --border-color: #dee2e6;
-  --border-focus: #86b7fe;
-  
-  /* Fontes */
-  --font-sans: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-  --font-serif: 'Lora', Georgia, 'Times New Roman', serif;
-  
-  /* Tamanhos */
-  --container-max: 1140px;
-  --header-height: 60px;
-  --border-radius: 0.375rem;
+  /* Enhanced Dark Academia Colors with Earthy Tones */
+  --background: #0f0f0f; /* Deep charcoal background */
+  --background-secondary: #1a1a1a; /* Slightly lighter background */
+  --surface: #2a2a2a; /* Card surfaces */
+  --surface-elevated: #333333; /* Elevated surfaces */
+
+  /* Academic Gold Palette */
+  --primary: #d4af37; /* Classic academic gold */
+  --primary-hover: #b8941f; /* Darker gold hover */
+  --primary-accent: #f4d03f; /* Bright gold accent */
+  --primary-muted: #8b7355; /* Muted gold */
+
+  /* Rich Academic Colors */
+  --secondary: #8b4513; /* Rich brown */
+  --secondary-hover: #a0522d; /* Lighter brown */
+  --tertiary: #2f4f4f; /* Dark slate gray */
+  --accent: #800020; /* Deep burgundy */
+
+  /* Status Colors */
+  --danger: #8b0000; /* Dark red */
+  --success: #556b2f; /* Dark olive green */
+  --warning: #b8860b; /* Dark goldenrod */
+  --info: #483d8b; /* Dark slate blue */
+
+  /* Text Colors */
+  --text-primary: #f5f5dc; /* Beige - easy on eyes */
+  --text-secondary: #d2b48c; /* Tan */
+  --text-muted: #a0a0a0; /* Light gray */
+  --text-light: #ffffff; /* Pure white */
+  --text-dark: #2f2f2f; /* Dark text for light backgrounds */
+
+  /* Border Colors */
+  --border-color: #4a4a4a; /* Subtle borders */
+  --border-focus: #d4af37; /* Gold focus */
+  --border-accent: #8b7355; /* Muted accent border */
+
+  /* Typography */
+  --font-serif: 'Crimson Text', 'Lora', 'Georgia', serif;
+  --font-sans: 'Source Sans Pro', 'Lato', sans-serif;
+  --font-mono: 'Source Code Pro', 'Courier New', monospace;
+
+  /* Spacing & Layout */
+  --container-max: 1200px;
+  --header-height: 70px;
+  --border-radius: 0.5rem;
+  --border-radius-small: 0.25rem;
+  --border-radius-large: 1rem;
   --spacing-unit: 1rem;
+  --spacing-small: 0.5rem;
+  --spacing-large: 2rem;
+
+  /* Shadows */
+  --shadow-small: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --shadow-medium: 0 4px 8px rgba(0, 0, 0, 0.4);
+  --shadow-large: 0 8px 16px rgba(0, 0, 0, 0.5);
+  --shadow-inset: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
 }

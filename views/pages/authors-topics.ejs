@@ -16,31 +16,31 @@
                         <div class="list-group">
                             <% authors.forEach(author => { %>
                                 <div class="list-group-item">
-                                    <div class="author-info">
-                                        <h5 class="mb-1"><%= author.name %></h5>
-                                        <% if (author.nationality) { %>
-                                            <small class="text-muted"><%= author.nationality %></small>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="author-info">
+                                            <h5 class="mb-1 author-name-with-nationality">
+                                                <%= author.name %><% if (author.nationality) { %> - <%= author.nationality %><% } %>
+                                            </h5>
+                                            <% if (author.bio && author.bio.trim() !== '') { %>
+                                                <div class="author-description">
+                                                    <%= author.bio %>
+                                                </div>
+                                            <% } %>
+                                        </div>
+                                        <% if (typeof user !== 'undefined') { %>
+                                            <div class="author-actions">
+                                                <a href="/authors/edit/<%= author.id %>" class="btn btn-sm btn-secondary">
+                                                    <i class="fas fa-edit"></i> Editar
+                                                </a>
+                                            </div>
                                         <% } %>
                                     </div>
-                                    <% if (author.bio) { %>
-                                        <p class="mb-1 text-muted"><%= author.bio %></p>
-                                    <% } %>
+
                                     <div class="quotes-container mt-3">
                                         <h6>Frases:</h6>
                                         <% if (author.quotes && author.quotes.length > 0) { %>
                                             <% author.quotes.forEach(quote => { %>
-                                                <div class="card mb-2">
-                                                    <div class="card-body py-2">
-                                                        <p class="mb-0">"<%= quote.text %>"</p>
-                                                        <% if (quote.topics && quote.topics.length > 0) { %>
-                                                            <div class="mt-1">
-                                                                <% quote.topics.forEach(topic => { %>
-                                                                    <span class="badge bg-secondary me-1">#<%= topic.name %></span>
-                                                                <% }) %>
-                                                            </div>
-                                                        <% } %>
-                                                    </div>
-                                                </div>
+                                                <%- include('../partials/_simple_quote_card', { quote: quote }) %>
                                             <% }) %>
                                         <% } else { %>
                                             <p class="text-muted">Nenhuma frase encontrada.</p>
@@ -70,19 +70,21 @@
                         <div class="list-group">
                             <% topics.forEach(topic => { %>
                                 <div class="list-group-item">
-                                    <h5 class="mb-2"><%= topic.name %></h5>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h5 class="mb-2"><%= topic.name %></h5>
+                                        <% if (typeof user !== 'undefined') { %>
+                                            <div class="topic-actions">
+                                                <a href="/topics/edit/<%= topic.id %>" class="btn btn-sm btn-secondary">
+                                                    <i class="fas fa-edit"></i> Editar
+                                                </a>
+                                            </div>
+                                        <% } %>
+                                    </div>
                                     <div class="quotes-container">
                                         <h6>Frases:</h6>
                                         <% if (topic.quotes && topic.quotes.length > 0) { %>
                                             <% topic.quotes.forEach(quote => { %>
-                                                <div class="card mb-2">
-                                                    <div class="card-body py-2">
-                                                        <p class="mb-0">"<%= quote.text %>"</p>
-                                                        <footer class="blockquote-footer">
-                                                            - <%= quote.author.name %>
-                                                        </footer>
-                                                    </div>
-                                                </div>
+                                                <%- include('../partials/_simple_quote_card', { quote: quote }) %>
                                             <% }) %>
                                         <% } else { %>
                                             <p class="text-muted">Nenhuma frase encontrada.</p>
