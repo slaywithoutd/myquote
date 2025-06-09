@@ -2,7 +2,7 @@ const Topic = require('../models/topicModel');
 
 const getAll = async (req, res) => {
   try {
-    const topics = await topicModel.getAll();
+    const topics = await Topic.getAll();
     res.status(200).json(topics);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -11,11 +11,11 @@ const getAll = async (req, res) => {
 
 const getById = async (req, res) => {
   try {
-    const topic = await topicModel.getById(req.params.id);
+    const topic = await Topic.getById(req.params.id);
     if (topic) {
       res.status(200).json(topic);
     } else {
-      res.status(404).json({ error: 'Topico não encontrado' });
+      res.status(404).json({ error: 'Tópico não encontrado' });
     }
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -51,13 +51,18 @@ const update = async (req, res) => {
 
 const deleteTopic = async (req, res) => {
   try {
-    const deletedTopic = await topicModel.delete(req.params.id);
+    const deletedTopic = await Topic.delete(req.params.id);
     if (deletedTopic) {
-      res.status(200).json(deletedTopic);
+      res.status(200).json({
+        success: true,
+        message: 'Tópico excluído com sucesso',
+        topic: deletedTopic
+      });
     } else {
-      res.status(404).json({ error: 'Topico não encontrado' });
+      res.status(404).json({ error: 'Tópico não encontrado' });
     }
   } catch (error) {
+    console.error('Error deleting topic:', error);
     res.status(500).json({ error: error.message });
   }
 };

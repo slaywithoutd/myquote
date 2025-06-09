@@ -1,47 +1,47 @@
-/* Dark Academia Typography Imports */
-@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Source+Sans+Pro:wght@300;400;600;700&family=Source+Code+Pro:wght@400;500&display=swap');
+/* Beautiful Library Typography Imports */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
-  /* Enhanced Dark Academia Colors with Earthy Tones */
-  --background: #0f0f0f; /* Deep charcoal background */
-  --background-secondary: #1a1a1a; /* Slightly lighter background */
-  --surface: #2a2a2a; /* Card surfaces */
-  --surface-elevated: #333333; /* Elevated surfaces */
+  /* Warm Library Color Palette */
+  --background: #f8f6f0; /* Warm cream background */
+  --background-secondary: #f2efe6; /* Slightly warmer cream */
+  --surface: #ffffff; /* Clean white surfaces */
+  --surface-elevated: #fefdfb; /* Elevated white with warmth */
 
-  /* Academic Gold Palette */
-  --primary: #d4af37; /* Classic academic gold */
-  --primary-hover: #b8941f; /* Darker gold hover */
-  --primary-accent: #f4d03f; /* Bright gold accent */
-  --primary-muted: #8b7355; /* Muted gold */
+  /* Rich Library Colors */
+  --primary: #8b4513; /* Rich mahogany brown */
+  --primary-hover: #a0522d; /* Lighter mahogany */
+  --primary-accent: #cd853f; /* Peru/sandy brown accent */
+  --primary-muted: #daa520; /* Goldenrod */
 
-  /* Rich Academic Colors */
-  --secondary: #8b4513; /* Rich brown */
-  --secondary-hover: #a0522d; /* Lighter brown */
-  --tertiary: #2f4f4f; /* Dark slate gray */
-  --accent: #800020; /* Deep burgundy */
+  /* Complementary Library Tones */
+  --secondary: #2f4f4f; /* Dark slate gray */
+  --secondary-hover: #708090; /* Slate gray */
+  --tertiary: #556b2f; /* Dark olive green */
+  --accent: #b22222; /* Fire brick red */
 
   /* Status Colors */
-  --danger: #8b0000; /* Dark red */
-  --success: #556b2f; /* Dark olive green */
-  --warning: #b8860b; /* Dark goldenrod */
-  --info: #483d8b; /* Dark slate blue */
+  --danger: #dc3545; /* Bootstrap red */
+  --success: #28a745; /* Bootstrap green */
+  --warning: #ffc107; /* Bootstrap yellow */
+  --info: #17a2b8; /* Bootstrap cyan */
 
   /* Text Colors */
-  --text-primary: #f5f5dc; /* Beige - easy on eyes */
-  --text-secondary: #d2b48c; /* Tan */
-  --text-muted: #a0a0a0; /* Light gray */
+  --text-primary: #2c2c2c; /* Dark charcoal for readability */
+  --text-secondary: #5a5a5a; /* Medium gray */
+  --text-muted: #888888; /* Light gray */
   --text-light: #ffffff; /* Pure white */
-  --text-dark: #2f2f2f; /* Dark text for light backgrounds */
+  --text-dark: #1a1a1a; /* Very dark for contrast */
 
   /* Border Colors */
-  --border-color: #4a4a4a; /* Subtle borders */
-  --border-focus: #d4af37; /* Gold focus */
-  --border-accent: #8b7355; /* Muted accent border */
+  --border-color: #e0d5c7; /* Warm beige border */
+  --border-focus: #8b4513; /* Mahogany focus */
+  --border-accent: #cd853f; /* Peru accent border */
 
   /* Typography */
-  --font-serif: 'Crimson Text', 'Lora', 'Georgia', serif;
-  --font-sans: 'Source Sans Pro', 'Lato', sans-serif;
-  --font-mono: 'Source Code Pro', 'Courier New', monospace;
+  --font-serif: 'Playfair Display', 'Georgia', 'Times New Roman', serif;
+  --font-sans: 'Inter', 'Helvetica Neue', 'Arial', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Monaco', 'Courier New', monospace;
 
   /* Spacing & Layout */
   --container-max: 1200px;

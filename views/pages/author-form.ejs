@@ -45,7 +45,12 @@
               <button type="submit" class="btn btn-primary">
                 <%= author ? 'Atualizar' : 'Criar' %> Autor
               </button>
-              <a href="/authors-topics" class="btn btn-secondary">Cancelar</a>
+              <% if (author) { %>
+                <button type="button" class="btn btn-danger ms-2" onclick="deleteAuthor()">
+                  Excluir Autor
+                </button>
+              <% } %>
+              <a href="/authors-topics" class="btn btn-secondary ms-2">Cancelar</a>
             </div>
           </form>
         </div>
@@ -86,4 +91,27 @@ document.getElementById('authorForm').addEventListener('submit', async (e) => {
     alert(error.message);
   }
 });
+
+// Function to delete author
+async function deleteAuthor() {
+  <% if (author) { %>
+    if (confirm('Tem certeza que deseja excluir este autor? Esta ação não pode ser desfeita e todas as frases associadas a este autor também serão afetadas.')) {
+      try {
+        const response = await fetch('/api/authors/<%= author.id %>', {
+          method: 'DELETE'
+        });
+
+        if (response.ok) {
+          alert('Autor excluído com sucesso!');
+          window.location.href = '/authors-topics';
+        } else {
+          const error = await response.json();
+          alert('Erro ao excluir autor: ' + error.error);
+        }
+      } catch (error) {
+        alert('Erro ao excluir autor: ' + error.message);
+      }
+    }
+  <% } %>
+}
 </script>

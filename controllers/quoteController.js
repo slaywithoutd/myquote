@@ -43,14 +43,31 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
   try {
-    const { text, description } = req.body;
-    const updatedQuote = await quoteModel.update(req.params.id, { text, description });
-    if (updatedQuote) {
-      res.status(200).json(updatedQuote);
-    } else {
-      res.status(404).json({ error: 'Frase não encontrada' });
+    const { text, description, author_id, topics } = req.body;
+
+    // Update quote basic info
+    const updatedQuote = await quoteModel.update(req.params.id, {
+      text,
+      description,
+      author_id
+    });
+
+    if (!updatedQuote) {
+      return res.status(404).json({ error: 'Frase não encontrada' });
     }
+
+    // Update topics if provided
+    if (topics && Array.isArray(topics)) {
+      await quoteModel.updateTopics(req.params.id, topics);
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Frase atualizada com sucesso',
+      quote: updatedQuote
+    });
   } catch (error) {
+    console.error('Error updating quote:', error);
     res.status(500).json({ error: error.message });
   }
 }
@@ -59,11 +76,16 @@ const deleteQuote = async (req, res) => {
   try {
     const deletedQuote = await quoteModel.delete(req.params.id);
     if (deletedQuote) {
-      res.status(200).json({ message: 'Frase deletada com sucesso' });
+      res.status(200).json({
+        success: true,
+        message: 'Frase deletada com sucesso',
+        quote: deletedQuote
+      });
     } else {
       res.status(404).json({ error: 'Frase não encontrada' });
     }
   } catch (error) {
+    console.error('Error deleting quote:', error);
     res.status(500).json({ error: error.message });
   }
 }

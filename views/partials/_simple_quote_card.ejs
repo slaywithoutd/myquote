@@ -1,5 +1,14 @@
-<div class="simple-quote-card">
-  <div class="quote-text">
-    <%= quote.text.replace(/[""]/g, '') %>
+<div class="simple-quote-card mb-2 p-3 rounded" style="background: var(--surface-elevated); border-left: 4px solid var(--primary-accent); box-shadow: var(--shadow-small);">
+  <div class="quote-text small" style="color: var(--text-primary); font-family: var(--font-serif); font-style: italic; line-height: 1.4;">
+    <% if (quote && quote.text) { %>
+      "<%= quote.text.replace(/[""]/g, '') %>"
+    <% } else { %>
+      Texto da frase não disponível
+    <% } %>
   </div>
+  <% if (quote && quote.author) { %>
+    <div class="quote-author text-end small mt-2" style="color: var(--text-secondary); font-family: var(--font-sans); font-weight: 500;">
+      — <%= quote.author %>
+    </div>
+  <% } %>
 </div>
