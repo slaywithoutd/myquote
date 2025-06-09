@@ -1,50 +1,87 @@
 # MyQuote
 
-Este projeto é uma aplicação web para registro, organização e consulta de frases marcantes, desenvolvido utilizando Node.js com Express.js como framework e PostgreSQL como banco de dados relacional, seguindo o padrão MVC (Model-View-Controller).
+MyQuote é uma aplicação web para registro, organização e consulta de frases marcantes, desenvolvida utilizando Node.js com Express.js como framework, EJS para templating e PostgreSQL como banco de dados relacional, seguindo o padrão arquitetural MVC (Model-View-Controller).
 
+## Descrição do Projeto
 
-### Descrição do Projeto  
-A aplicação MyQuote é uma plataforma que funciona como um acervo pessoal de frases, permitindo que os usuários cadastrem pensamentos, atribuam-nos a autores e os classifiquem por temas específicos. O sistema foi projetado para facilitar a curadoria de conteúdo textual, incentivando a organização e o armazenamento de citações que inspiram, motivam ou merecem ser guardadas.
+A aplicação MyQuote funciona como um acervo pessoal de frases, permitindo que os usuários cadastrem citações, atribuam-nas a autores e as classifiquem por temas específicos. O sistema foi projetado para facilitar a curadoria de conteúdo textual, incentivando a organização e o armazenamento de citações que inspiram, motivam ou merecem ser guardadas.
 
+### Tecnologias Utilizadas
 
-## Requisitos
-Node.js (versão 14.x ou superior)
-PostgreSQL (versão 12.x ou superior)
+- **Backend**: Node.js, Express.js
+- **Frontend**: EJS (Embedded JavaScript), EJS-Mate, HTML5, CSS3, JavaScript
+- **Banco de Dados**: PostgreSQL
+- **Autenticação**: Express-session, bcrypt, JWT
+- **Outras dependências**: body-parser, cors, method-override, dotenv
+
+## Pré-requisitos
+
+Antes de executar o projeto, certifique-se de ter instalado:
+
+- **Node.js** (versão 16.x ou superior)
+- **npm** (geralmente incluído com Node.js)
+- **PostgreSQL** (versão 12.x ou superior)
 
 ## Instalação
 
-1. **Clonar o repositório:**
+### 1. Clonar o repositório
 
 ```bash
-   git clone https://github.com/seu-usuario/seu-projeto.git
-   cd seu-projeto
+git clone https://github.com/Inteli-College/2025-1A-T17-IN01-G03.git
+cd 2025-1A-T17-IN01-G03/myquote
 ```
 
-2. **Instalar as dependências:**
-    
+### 2. Instalar as dependências
+
 ```bash
 npm install
 ```
-    
-3. **Configurar o arquivo `.env`:**
-    
-Renomeie o arquivo `.env.example` para `.env` e configure as variáveis de ambiente necessárias, como as configurações do banco de dados PostgreSQL.
-    
 
-Configuração do Banco de Dados
-------------------------------
+### 3. Configuração do Ambiente
 
-1. **Criar banco de dados:**
-    
-    Crie um banco de dados PostgreSQL com o nome especificado no seu arquivo `.env`.
-    
-2. **Executar o script SQL de inicialização:**
-    
+Crie um arquivo `.env` na raiz do projeto com as seguintes variáveis de ambiente:
+
+```env
+# Configurações do Banco de Dados
+DB_HOST=localhost
+DB_PORT=5432
+DB_DATABASE=myquote_db
+DB_USER=seu_usuario_postgres
+DB_PASSWORD=sua_senha_postgres
+
+# Configurações do Servidor
+PORT=3000
+
+# Configurações de Sessão
+SESSION_SECRET=sua_chave_secreta_aqui
+```
+
+**Importante**: Substitua os valores pelos dados do seu ambiente PostgreSQL.
+
+## Configuração do Banco de Dados
+
+### 1. Criar o banco de dados
+
+Conecte-se ao PostgreSQL e crie o banco de dados:
+
+```sql
+CREATE DATABASE myquote_db;
+```
+
+### 2. Executar o script de inicialização
+
+Execute o comando para criar as tabelas e estrutura do banco:
+
 ```bash
 npm run init-db
 ```
-    
-Isso criará a tabela `users` no seu banco de dados PostgreSQL com UUID como chave primária e inserirá alguns registros de exemplo.
+
+Este comando criará as seguintes tabelas:
+- **users**: Armazena informações dos usuários
+- **authors**: Informações sobre autores das citações
+- **quotes**: Citações cadastradas pelos usuários
+- **topics**: Temas/categorias das citações
+- **quote_topic**: Tabela de associação entre citações e temas
     
 
 Funcionalidades
