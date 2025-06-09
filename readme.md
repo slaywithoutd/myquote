@@ -112,6 +112,9 @@ Estrutura de Diretórios
 * **`routes/`**: Rotas da aplicação.
 * **`tests/`**: Testes automatizados.
 * **`views/`**: Views da aplicação (se aplicável).
+* **`public/`**: Arquivos estáticos (CSS, JavaScript, imagens, etc.).
+* **`scripts/`**: Scripts auxiliares, como scripts de inicialização do banco de dados.
+
 
 
 Modelo do Banco de Dados
@@ -129,4 +132,4 @@ Licença
 
 Este projeto está licenciado sob a Licença MIT.
 
-Este README.md fornece uma visão geral clara do boilerplate, incluindo instruções de instalação, configuração do banco de dados, funcionalidades principais, scripts disponíveis, estrutura de diretórios, como contribuir e informações de licença. Certifique-se de personalizar as seções com detalhes específicos do seu projeto conforme necessário.
+
