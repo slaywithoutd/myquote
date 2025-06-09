@@ -5,18 +5,21 @@
     <div class="col-md-8 offset-md-2">
       <div class="card paper-card">
         <div class="card-body">
-          <h2 class="card-title text-center">Nova Frase</h2>
+          <h2 class="card-title text-center"><%= quote ? 'Editar Frase' : 'Nova Frase' %></h2>
 
           <form id="quoteForm">
+            <% if (quote) { %>
+              <input type="hidden" id="quoteId" value="<%= quote.id %>">
+            <% } %>
             <div class="mb-3">
               <label for="text" class="form-label">Texto da Frase</label>
-              <textarea 
-                class="form-control" 
-                id="text" 
-                name="text" 
-                rows="3" 
+              <textarea
+                class="form-control"
+                id="text"
+                name="text"
+                rows="3"
                 required
-              ></textarea>
+              ><%= quote ? quote.text : '' %></textarea>
             </div>
 
             <div class="mb-3">
@@ -28,9 +31,13 @@
                   id="author_name"
                   name="author_name"
                   placeholder="Digite o nome do autor ou clique para selecionar"
+                  value="<%= quote && quote.author_name ? quote.author_name : '' %>"
                   required
                   readonly
                 >
+                <% if (quote && quote.author_id) { %>
+                  <input type="hidden" id="author_id" value="<%= quote.author_id %>">
+                <% } %>
                 <button
                   type="button"
                   class="btn btn-outline-primary"
@@ -54,6 +61,7 @@
                         name="topics"
                         value="<%= topic.id %>"
                         id="topic<%= topic.id %>"
+                        <%= quote && quote.topics && quote.topics.includes(topic.id) ? 'checked' : '' %>
                       >
                       <label class="form-check-label" for="topic<%= topic.id %>">
                         <%= topic.name %>
@@ -66,17 +74,24 @@
 
             <div class="mb-3">
               <label for="description" class="form-label">Descrição</label>
-              <textarea 
-                class="form-control" 
-                id="description" 
-                name="description" 
-                rows="2" 
+              <textarea
+                class="form-control"
+                id="description"
+                name="description"
+                rows="2"
                 placeholder="Adicione uma breve descrição para a frase (opcional)"
-              ></textarea>
+              ><%= quote ? quote.description || '' : '' %></textarea>
             </div>
 
             <div class="mb-3">
-              <button type="submit" class="btn btn-primary">Criar Frase</button>
+              <button type="submit" class="btn btn-primary">
+              <%= quote ? 'Atualizar Frase' : 'Criar Frase' %>
+            </button>
+            <% if (quote) { %>
+              <button type="button" class="btn btn-danger ms-2" onclick="deleteQuote()">
+                Excluir Frase
+              </button>
+            <% } %>
               <a href="/" class="btn btn-secondary">Cancelar</a>
             </div>
           </form>
@@ -187,6 +202,9 @@ document.getElementById('quoteForm').addEventListener('submit', async (e) => {
     const text = document.getElementById('text').value.trim();
     const authorName = document.getElementById('author_name').value.trim();
     const description = document.getElementById('description').value.trim();
+    const quoteId = document.getElementById('quoteId')?.value;
+    const authorId = document.getElementById('author_id')?.value;
+    const isEditing = !!quoteId;
 
     if (!text || !authorName) {
         showError('Por favor, preencha todos os campos obrigatórios');
@@ -197,6 +215,7 @@ document.getElementById('quoteForm').addEventListener('submit', async (e) => {
         text: text,
         description: description,
         author_name: authorName,
+        author_id: authorId,
         username: '<%= user.username %>',
         topics: Array.from(document.querySelectorAll('input[name="topics"]:checked'))
             .map(cb => cb.value)
@@ -205,8 +224,11 @@ document.getElementById('quoteForm').addEventListener('submit', async (e) => {
     console.log('Sending data:', formData);
 
     try {
-        const response = await fetch('/api/quotes', {
-            method: 'POST',
+        const url = isEditing ? `/api/quotes/${quoteId}` : '/api/quotes';
+        const method = isEditing ? 'PUT' : 'POST';
+
+        const response = await fetch(url, {
+            method: method,
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -216,7 +238,7 @@ document.getElementById('quoteForm').addEventListener('submit', async (e) => {
         const data = await response.json();
 
         if (!response.ok) {
-            throw new Error(data.error || 'Erro ao criar frase');
+            throw new Error(data.error || `Erro ao ${isEditing ? 'atualizar' : 'criar'} frase`);
         }
 
         window.location.href = '/';
@@ -225,6 +247,30 @@ document.getElementById('quoteForm').addEventListener('submit', async (e) => {
         showError(error.message);
     }
 });
+
+// Function to delete quote
+async function deleteQuote() {
+    const quoteId = document.getElementById('quoteId')?.value;
+    if (!quoteId) return;
+
+    if (confirm('Tem certeza que deseja excluir esta frase? Esta ação não pode ser desfeita.')) {
+        try {
+            const response = await fetch(`/api/quotes/${quoteId}`, {
+                method: 'DELETE'
+            });
+
+            if (response.ok) {
+                alert('Frase excluída com sucesso!');
+                window.location.href = '/';
+            } else {
+                const error = await response.json();
+                alert('Erro ao excluir frase: ' + error.error);
+            }
+        } catch (error) {
+            alert('Erro ao excluir frase: ' + error.message);
+        }
+    }
+}
 
 function showError(message) {
     const alert = document.createElement('div');
