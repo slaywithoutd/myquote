@@ -28,7 +28,7 @@ O objetivo é criar uma plataforma funcional para armazenar e organizar frases, 
 
 ## <a name="c2"></a>2. Visão Geral da Aplicação Web
 
-### 2.1. Personas (Semana 01 - opcional) [UPDATED]
+### 2.1. Personas (Semana 01 - opcional)
 
 #### Persona 1: Maria Eduarda - A Estudante Universitária
 
@@ -125,7 +125,7 @@ Ana está criando uma campanha para uma marca de lifestyle focada em empoderamen
 
 INSERT IMAGE: [Infográfico visual das três personas mostrando fotos representativas, dados demográficos principais e objetivos de cada uma]
 
-### 2.2. User Stories (Semana 01 - opcional) [UPDATED]
+### 2.2. User Stories (Semana 01 - opcional)
 
 #### User Stories Implementadas
 
@@ -303,17 +303,17 @@ Além disso, os Models do MyQuote são responsáveis por validar dados, aplicar 
 
 
 ##### Models Implementados:
-`models/User.js`: Define o modelo User, correspondente à tabela users. Permite criar, consultar, atualizar e remover usuários, além de autenticar credenciais.
+`models/userModel.js`: Define o modelo User, correspondente à tabela users. Permite criar, consultar, atualizar e remover usuários, além de autenticar credenciais através de hash bcrypt e validação de email único.
 
-`models/Author.js`: Define o modelo Author, correspondente à tabela authors. Permite cadastrar, consultar, atualizar e excluir autores, bem como buscar autores por nome ou nacionalidade.
+`models/authorModel.js`: Define o modelo Author, correspondente à tabela authors. Permite cadastrar, consultar, atualizar e excluir autores, incluindo métodos especializados como `getAllWithQuotes()` para buscar autores com suas respectivas citações.
 
-`models/Quote.js`: Define o modelo Quote, correspondente à tabela quotes. Permite criar, listar, editar e remover frases, além de associá-las a autores, usuários e tópicos.
+`models/quoteModel.js`: Define o modelo Quote, correspondente à tabela quotes. Implementa CRUD completo para citações, incluindo associação automática com autores e tópicos. Gerencia relacionamentos N:N com tópicos através de métodos como `updateTopics()` e consultas especializadas `getByAuthor()` e `getByTopic()`.
 
-`models/Topic.js`: Define o modelo Topic, correspondente à tabela topics. Permite criar, consultar, atualizar e excluir tópicos, além de listar frases relacionadas a cada tema.
+`models/topicModel.js`: Define o modelo Topic, correspondente à tabela topics. Permite criar, consultar, atualizar e excluir tópicos, incluindo método `getAllWithQuotes()` para buscar tópicos com suas citações associadas.
 
-`models/QuoteTopic.js`: Define o modelo QuoteTopic, correspondente à tabela quote_topic, que representa a relação N:N entre quotes e topics. Permite associar e desassociar frases e tópicos.
+**Nota sobre Relacionamentos N:N:** Os relacionamentos entre quotes e topics são gerenciados diretamente no modelo Quote através de métodos especializados, eliminando a necessidade de um modelo separado para a tabela intermediária quote_topic. Esta abordagem simplifica a arquitetura mantendo a funcionalidade completa.
 
-Os Models são importados e utilizados pelos controllers em `controllers/`, implementando toda a lógica CRUD (Create, Read, Update, Delete) para cada entidade do sistema. Seguindo boas práticas como separação de responsabilidades e uso de consultas SQL parametrizadas, os models encapsulam a lógica de negócios e o acesso ao banco de dados, facilitando a manutenção, testes e expansões futuras do sistema.
+Os Models são importados e utilizados pelos controllers, implementando toda a lógica CRUD (Create, Read, Update, Delete) para cada entidade do sistema. Seguindo boas práticas como separação de responsabilidades, uso de consultas SQL parametrizadas e transações para operações complexas, os models encapsulam a lógica de negócios e o acesso ao banco de dados, facilitando a manutenção, testes e expansões futuras do sistema.
 ### 3.2. Arquitetura 
 
 A arquitetura do sistema MyQuote segue o padrão MVC (Model-View-Controller), que promove a separação de responsabilidades em camadas distintas, tornando o código mais organizado, reutilizável e manutenível. Abaixo está o diagrama da arquitetura implementada, ilustrando como as diferentes partes do sistema interagem entre si e como os dados fluem através da aplicação de gerenciamento de citações.
@@ -329,30 +329,46 @@ A arquitetura do sistema MyQuote segue o padrão MVC (Model-View-Controller), qu
 ##### Models (Modelos)
 As principais entidades do sistema são:
 - Users (id, username, email, password)
-- Authors (id, name, nationality, biography)
-- Quotes (id, text, user_id, author_id)
-- Topics (id, name, description) 
-- QuoteTopic (quote_id, topic_id)
+- Authors (id, name, nationality, bio)
+- Quotes (id, text, description, created_at, user_id, author_id)
+- Topics (id, name)
+- Quote_Topic (quote_id, topic_id) - tabela intermediária
 
-As relações entre entidades seguem o diagrama apresentado anteriormente, com users tendo várias quotes, quotes pertencendo a authors, e quotes tendo múltiplos topics através da tabela intermediária.
+As relações entre entidades seguem o diagrama apresentado anteriormente, com users tendo várias quotes, quotes pertencendo a authors, e quotes tendo múltiplos topics através da tabela intermediária quote_topic. O relacionamento N:N entre quotes e topics é gerenciado através de métodos especializados no modelo Quote.
 
 ##### Controllers (Controladores)
-Os principais controllers são:
+Os principais controllers implementados são:
 
-- UserController: Gerencia registro, login e perfil de usuários
-    - register(req, res): Cria novo usuário
-    - login(req, res): Autentica usuário
-    - profile(req, res): Exibe/atualiza perfil
+- **UserController**: Gerencia registro, login e operações de usuários
+    - getAll(req, res): Lista todos os usuários
+    - getById(req, res): Obtém usuário específico
+    - create(req, res): Cria novo usuário com validação e hash de senha
+    - update(req, res): Atualiza dados do usuário
+    - deleteUser(req, res): Remove usuário
+    - login(req, res): Autentica usuário e cria sessão
 
-- QuoteController: Gerencia operações com citações
-    - create(req, res): Adiciona nova citação
-    - list(req, res): Lista citações
-    - update(req, res): Atualiza citação
-    - delete(req, res): Remove citação
+- **QuoteController**: Gerencia operações completas com citações
+    - getAll(): Retorna todas as citações (usado internamente)
+    - getById(req, res): Obtém citação específica
+    - create(req, res): Adiciona nova citação com associação automática de autor e tópicos
+    - update(req, res): Atualiza citação e seus relacionamentos
+    - deleteQuote(req, res): Remove citação e associações
 
-- AuthorController e TopicController seguem padrão similar para suas entidades
+- **AuthorController**: Gerencia operações com autores
+    - getAll(req, res): Lista todos os autores
+    - getById(req, res): Obtém autor específico
+    - create(req, res): Cria novo autor
+    - update(req, res): Atualiza dados do autor
+    - deleteAuthor(req, res): Remove autor
 
-Os controllers interagem com os models para operações no banco e com as views para renderização.
+- **TopicController**: Gerencia operações com tópicos
+    - getAll(req, res): Lista todos os tópicos
+    - getById(req, res): Obtém tópico específico
+    - create(req, res): Cria novo tópico
+    - update(req, res): Atualiza tópico com validação de duplicatas
+    - deleteTopic(req, res): Remove tópico
+
+Os controllers interagem com os models para operações no banco e implementam validação de dados, tratamento de erros e respostas HTTP apropriadas.
 
 
 ##### Views (Visualizações)
@@ -386,9 +402,9 @@ A integração acontece através dos models que abstraem o acesso ao banco, cont
 
 *Posicione aqui algumas imagens demonstrativas de seu protótipo de alta fidelidade e o link para acesso ao protótipo completo (mantenha o link sempre público para visualização).*
 
-### 3.6. WebAPI e endpoints [UPDATED]
+### 3.6. WebAPI e endpoints
 
-A API RESTful do MyQuote foi implementada seguindo padrões de desenvolvimento web modernos, oferecendo endpoints bem estruturados para gerenciamento completo de usuários, citações, autores e tópicos. A API utiliza códigos de status HTTP apropriados, validação de dados robusta e tratamento de erros consistente, garantindo uma integração confiável entre frontend e backend.
+A API RESTful do MyQuote foi implementada seguindo padrões de desenvolvimento web modernos, oferecendo endpoints estruturados para gerenciamento de usuários, citações, autores e tópicos. A API utiliza códigos de status HTTP apropriados, validação de dados e tratamento de erros, garantindo uma integração funcional entre frontend e backend através de requisições AJAX com Fetch API.
 
 #### 3.6.1 Arquitetura da API
 
@@ -399,111 +415,116 @@ A API RESTful do MyQuote foi implementada seguindo padrões de desenvolvimento w
 - **Middleware**: Validação, autenticação e tratamento de erros
 - **CORS**: Configuração para requisições cross-origin
 
-**Estrutura de Resposta Padronizada:**
+**Estrutura de Resposta Implementada:**
 ```json
+// Resposta de sucesso (exemplo: criação de citação)
 {
-  "success": true,
-  "data": {...},
-  "message": "Operação realizada com sucesso",
-  "timestamp": "2024-01-15T10:30:00Z"
+  "id": "uuid",
+  "text": "Texto da citação",
+  "description": "Descrição opcional",
+  "author_name": "Nome do Autor",
+  "topics": [{"id": "uuid", "name": "tópico"}]
 }
 ```
 
 **Tratamento de Erros:**
 ```json
 {
-  "success": false,
-  "error": "Descrição do erro",
-  "code": "ERROR_CODE",
-  "timestamp": "2024-01-15T10:30:00Z"
+  "error": "Descrição do erro específico"
 }
 ```
 
 #### 3.6.2 Endpoints Implementados
 
-A API do MyQuote expõe os seguintes endpoints para gerenciamento de usuários, citações, autores e tópicos:
+A API do MyQuote expõe os seguintes endpoints funcionais para gerenciamento de usuários, citações, autores e tópicos:
 
 ##### Usuários
-- `POST /api/users/register` - Registra novo usuário
+- `GET /api/users` - Lista todos os usuários
+    - 200: Lista retornada
+    - 500: Erro interno
+- `GET /api/users/:id` - Obtém usuário específico
+    - 200: Usuário encontrado
+    - 404: Usuário não encontrado
+- `POST /api/users` - Cria novo usuário
     - 201: Usuário criado com sucesso
-    - 400: Dados inválidos
-    - 409: Email já cadastrado
+    - 400: Dados inválidos ou email já cadastrado
+    - 500: Erro interno
+- `PUT /api/users/:id` - Atualiza usuário
+    - 200: Usuário atualizado
+    - 404: Usuário não encontrado
+    - 500: Erro interno
+- `DELETE /api/users/:id` - Remove usuário
+    - 200: Usuário removido
+    - 404: Usuário não encontrado
 - `POST /api/users/login` - Autentica usuário
-    - 200: Login bem sucedido
+    - 200: Login bem sucedido com criação de sessão
     - 401: Credenciais inválidas
-- `GET /api/users/profile` - Obtém perfil do usuário
-    - 200: Perfil retornado
-    - 401: Não autorizado
-- `PUT /api/users/profile` - Atualiza perfil do usuário
-    - 200: Perfil atualizado
-    - 400: Dados inválidos
-    - 401: Não autorizado
+    - 500: Erro interno
+- `GET /api/users/logout` - Encerra sessão do usuário
+    - Redirect: Redireciona para página inicial
 
 ##### Citações
 - `POST /api/quotes` - Cria nova citação
-    - 201: Citação criada
+    - 201: Citação criada com associação automática de autor e tópicos
     - 400: Dados inválidos
-    - 401: Não autorizado
-- `GET /api/quotes` - Lista todas as citações
-    - 200: Lista retornada
-- `GET /api/quotes/:id` - Obtém citação específica
-    - 200: Citação encontrada
-    - 404: Citação não encontrada
+    - 500: Erro interno
 - `PUT /api/quotes/:id` - Atualiza citação
-    - 200: Citação atualizada
-    - 400: Dados inválidos
+    - 200: Citação atualizada com relacionamentos
     - 404: Citação não encontrada
+    - 500: Erro interno
 - `DELETE /api/quotes/:id` - Remove citação
-    - 204: Citação removida
+    - 200: Citação removida com limpeza de associações
     - 404: Citação não encontrada
+    - 500: Erro interno
 
 ##### Autores
-- `POST /api/authors` - Adiciona novo autor
-    - 201: Autor criado
-    - 400: Dados inválidos
 - `GET /api/authors` - Lista todos os autores
-    - 200: Lista retornada
+    - 200: Lista retornada com contadores de citações
 - `GET /api/authors/:id` - Obtém autor específico
     - 200: Autor encontrado
     - 404: Autor não encontrado
+- `POST /api/authors` - Adiciona novo autor
+    - 201: Autor criado
+    - 500: Erro interno
 - `PUT /api/authors/:id` - Atualiza autor
     - 200: Autor atualizado
-    - 400: Dados inválidos
     - 404: Autor não encontrado
+    - 500: Erro interno
 - `DELETE /api/authors/:id` - Remove autor
-    - 204: Autor removido
+    - 200: Autor removido
     - 404: Autor não encontrado
+    - 500: Erro interno
+- `GET /api/authors/:id/quotes` - Obtém citações do autor
+    - 200: Citações retornadas
+    - 500: Erro interno
 
 ##### Tópicos
-- `POST /api/topics` - Cria novo tópico
-    - 201: Tópico criado
-    - 400: Dados inválidos
 - `GET /api/topics` - Lista todos os tópicos
-    - 200: Lista retornada
+    - 200: Lista retornada com contadores de citações
 - `GET /api/topics/:id` - Obtém tópico específico
     - 200: Tópico encontrado
     - 404: Tópico não encontrado
+- `POST /api/topics` - Cria novo tópico
+    - 201: Tópico criado
+    - 500: Erro interno
 - `PUT /api/topics/:id` - Atualiza tópico
     - 200: Tópico atualizado
-    - 400: Dados inválidos
     - 404: Tópico não encontrado
+    - 500: Erro interno (incluindo violação de unicidade)
 - `DELETE /api/topics/:id` - Remove tópico
-    - 204: Tópico removido
+    - 200: Tópico removido
     - 404: Tópico não encontrado
+    - 500: Erro interno
+- `GET /api/topics/:id/quotes` - Obtém citações do tópico
+    - 200: Citações retornadas
+    - 500: Erro interno
 
-##### Associações
-- `POST /api/quotes/:id/topics` - Associa tópicos à citação
-    - 201: Associação criada
-    - 400: Dados inválidos
-    - 404: Citação ou tópico não encontrado
-- `DELETE /api/quotes/:id/topics/:topicId` - Remove tópico da citação
-    - 204: Associação removida
-    - 404: Associação não encontrada
+**Nota:** Os relacionamentos N:N entre citações e tópicos são gerenciados automaticamente através dos métodos do modelo Quote, não requerendo endpoints específicos para associações.
 
 
-### 3.7 Interface e Navegação (Semana 07) [NEW - Week 7]
+### 3.7 Interface e Navegação (Semana 07) 
 
-O desenvolvimento do frontend do sistema MyQuote foi implementado seguindo uma abordagem de design responsivo com tema library, priorizando a usabilidade, acessibilidade e experiência do usuário. A interface foi construída utilizando EJS (Embedded JavaScript) como engine de templates, integrada com Bootstrap 5 e CSS customizado para criar uma identidade visual única e coesa.
+O frontend do sistema MyQuote foi completamente implementado seguindo uma abordagem de design responsivo com tema library elegante, priorizando a usabilidade, acessibilidade e experiência do usuário. A interface foi construída utilizando EJS (Embedded JavaScript) como engine de templates, integrada com Bootstrap 5 e CSS customizado para criar uma identidade visual única e coesa que remete ao ambiente de uma biblioteca clássica.
 
 #### 3.7.1 Arquitetura Frontend e Tecnologias Utilizadas
 
@@ -517,7 +538,7 @@ O desenvolvimento do frontend do sistema MyQuote foi implementado seguindo uma a
 - **CSS Customizado**: Estilização personalizada seguindo tema library
 - **Arquitetura CSS Modular**: Organização em base, components e pages
 
-**Estrutura de Arquivos Frontend:**
+**Estrutura de Arquivos Frontend Implementada:**
 ```
 views/
 ├── layout/main.ejs          # Layout principal da aplicação
@@ -527,13 +548,16 @@ views/
 │   ├── register.ejs        # Página de cadastro
 │   ├── quote-form.ejs      # Formulário de criação/edição de frases
 │   ├── authors-topics.ejs  # Página de gerenciamento de autores e tópicos
-│   └── filtered-quotes.ejs # Página de frases filtradas
+│   ├── filtered-quotes.ejs # Página de frases filtradas
+│   ├── author-form.ejs     # Formulário de criação/edição de autores
+│   ├── topic-form.ejs      # Formulário de criação/edição de tópicos
+│   ├── users.ejs           # Página de perfil do usuário
+│   └── error.ejs           # Página de tratamento de erros
 ├── components/             # Componentes reutilizáveis
-│   └── header.ejs         # Cabeçalho com navegação
+│   └── header.ejs         # Cabeçalho com navegação responsiva
 └── partials/              # Elementos parciais
     ├── hero.ejs           # Seção hero da página inicial
-    ├── _quote_card.ejs    # Card de exibição de frases
-    └── _simple_quote_card.ejs # Card simplificado
+    └── _quote_card.ejs    # Card de exibição de frases
 ```
 
 #### 3.7.2 Sistema de Design e Identidade Visual
@@ -555,7 +579,11 @@ views/
 - **Bordas Coloridas**: Indicadores visuais seguindo a paleta
 - **Ícones Geométricos**: Representação visual de tópicos
 
-INSERT IMAGE: [Screenshot da página inicial mostrando a paleta de cores, tipografia e layout geral do sistema MyQuote com tema library]
+<div align="center">
+<sup>Figura 4 - Tela Inicial</sup>
+<img src="/documentos/assets/hero.png"/>
+<sup>Fonte: Autoria própria, 2025</sup>
+</div>
 
 #### 3.7.3 Navegação e Estrutura de Páginas
 
@@ -573,42 +601,67 @@ O sistema implementa uma navegação intuitiva e responsiva através de um navba
 - Botões touch-friendly (44px mínimo)
 - Fechamento automático ao selecionar item
 
-INSERT IMAGE: [Screenshot comparativo mostrando a navegação em desktop e mobile, destacando o menu hamburger e a responsividade]
+<div align="center">
+<sup>Figura 5 - Tela inicial versão mobile</sup>
+<img src="/documentos/assets/mobile.png"/>
+<sup>Fonte: Autoria própria, 2025</sup>
+</div>
 
-**Estrutura de Páginas Implementadas:**
+**Páginas Implementadas e Funcionais:**
 
 1. **Página Inicial (index.ejs)**
-   - Hero Section com call-to-action
-   - Listagem de frases recentes
-   - Cards de frases com informações do autor e tópicos
-   - Sistema de filtros visuais por tópicos
+   - Hero Section com call-to-action "Nova Frase"
+   - Listagem dinâmica de frases recentes ordenadas por data
+   - Cards de frases elegantes com informações do autor e nacionalidade
+   - Integração com backend via EJS para renderização server-side
+   - Layout responsivo que se adapta a diferentes dispositivos
 
-INSERT IMAGE: [Screenshot da página inicial completa mostrando hero section, cards de frases e layout responsivo]
+<div align="center">
+<sup>Figura 6 - Tela inicial, seção de frases recentes</sup>
+<img src="/documentos/assets/quotes.png"/>
+<sup>Fonte: Autoria própria, 2025</sup>
+</div>
 
 2. **Formulário de Frases (quote-form.ejs)**
-   - Interface intuitiva para criação de frases
-   - Seleção de autor via modal
+   - Interface intuitiva para criação e edição de frases
+   - Seleção de autor via modal com busca e criação automática
    - Seleção múltipla de tópicos com checkboxes estilizados
-   - Validação em tempo real
-   - Feedback visual de estados
+   - Campo de descrição opcional para contexto
+   - Validação client-side e server-side
+   - Integração via Fetch API para operações CRUD
 
-INSERT IMAGE: [Screenshot do formulário de criação de frases mostrando modal de seleção de autor e checkboxes de tópicos]
+<div align="center">
+<sup>Figura 7 - Formulário de criação de uma nova frase</sup>
+<img src="/documentos/assets/quoteforms.png"/>
+<sup>Fonte: Autoria própria, 2025</sup>
+</div>
 
 3. **Autores & Tópicos (authors-topics.ejs)**
-   - Visualização organizada de autores e tópicos
-   - Cards informativos com contadores de frases
-   - Links para filtros específicos
-   - Layout em grid responsivo
+   - Visualização organizada em duas colunas responsivas
+   - Cards informativos com contadores dinâmicos de citações
+   - Links funcionais para filtros específicos por autor/tópico
+   - Botões de edição e criação (quando usuário logado)
+   - Layout em grid que se adapta ao conteúdo
 
-INSERT IMAGE: [Screenshot da página de autores e tópicos mostrando a organização em cards e informações estatísticas]
+<div align="center">
+<sup>Figura 8 - Segunda Página, com os autores e tópicos</sup>
+<img src="/documentos/assets/secondPage.png"/>
+<sup>Fonte: Autoria própria, 2025</sup>
+</div>
 
 4. **Páginas de Autenticação (login.ejs, register.ejs)**
-   - Formulários estilizados seguindo o tema
-   - Validação de campos
-   - Feedback de erros
+   - Formulários estilizados seguindo o tema library
+   - Validação de campos em tempo real
+   - Feedback visual de erros e sucessos
    - Design centrado e responsivo
+   - Integração com sistema de sessões do backend
 
-INSERT IMAGE: [Screenshot das páginas de login e registro mostrando o design dos formulários e validação]
+<div align="center">
+<sup>Figura 9 - Formulário de Registro</sup>
+<img src="/documentos/assets/registerform.png"/>
+<sup>Fonte: Autoria própria, 2025</sup>
+</div>
+
 
 #### 3.7.4 Componentes e Funcionalidades Interativas
 
@@ -637,7 +690,7 @@ INSERT IMAGE: [Screenshot das páginas de login e registro mostrando o design do
 - **Posicionamento**: Canto superior direito dos cards
 - **Tooltip**: Informações adicionais no hover
 
-INSERT IMAGE: [Close-up dos quote cards mostrando os indicadores geométricas de tópicos e efeitos hover]
+INSERT IMAGE: [Close-up dos quote cards implementados mostrando a estrutura semântica HTML, tipografia elegante, informações do autor com nacionalidade e integração com dados do backend]
 
 #### 3.7.5 Responsividade e Acessibilidade
 
@@ -660,7 +713,7 @@ INSERT IMAGE: [Close-up dos quote cards mostrando os indicadores geométricas de
 - **Lazy Loading**: Implementação para elementos não críticos
 - **Minificação**: CSS e JavaScript otimizados para produção
 
-INSERT IMAGE: [Screenshot mostrando a aplicação em diferentes dispositivos (desktop, tablet, mobile) demonstrando a responsividade]
+
 
 #### 3.7.6 Integração Frontend-Backend
 
@@ -676,17 +729,23 @@ INSERT IMAGE: [Screenshot mostrando a aplicação em diferentes dispositivos (de
 - **Template Inheritance**: Reutilização eficiente de layouts
 - **Partial Rendering**: Componentes modulares e reutilizáveis
 
-**Exemplo de Integração (Criação de Frase):**
+**Exemplo de Integração Implementada (Criação de Frase):**
 ```javascript
-// Frontend: Envio de dados via Fetch API
+// Frontend: Envio de dados via Fetch API (quote-form.ejs)
 const response = await fetch('/api/quotes', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(formData)
+    body: JSON.stringify({
+        text: document.getElementById('text').value,
+        description: document.getElementById('description').value,
+        username: '<%= user.username %>',
+        author_name: selectedAuthor,
+        topics: selectedTopics
 });
 
-// Backend: Processamento e resposta
-const newQuote = await quoteModel.create(data);
+// Backend: Processamento e resposta (quoteController.js)
+const { text, description, username, author_name, topics } = req.body;
+const newQuote = await quoteModel.create({ text, description, username, author_name, topics });
 res.status(201).json(newQuote);
 ```
 
@@ -705,439 +764,30 @@ res.status(201).json(newQuote);
 - **Modal Dialogs**: Confirmações importantes
 - **Progress Indicators**: Feedback de progresso
 
-INSERT IMAGE: [Screenshot mostrando diferentes estados da interface: loading, success, error e empty states]
 
 #### 3.7.8 Conclusão da Implementação Frontend
 
 O frontend do MyQuote foi desenvolvido com foco na experiência do usuário, implementando um design system coeso que reflete o tema de biblioteca clássica. A arquitetura modular facilita manutenção e expansões futuras, enquanto a responsividade garante acessibilidade em todos os dispositivos. A integração com o backend é fluida e eficiente, proporcionando uma experiência de uso moderna e intuitiva.
 
-**Principais Conquistas:**
-- ✅ Interface responsiva e acessível
-- ✅ Design system consistente e elegante
-- ✅ Navegação intuitiva em todos os dispositivos
-- ✅ Componentes reutilizáveis e modulares
-- ✅ Integração eficiente frontend-backend
-- ✅ Performance otimizada
-- ✅ Experiência do usuário fluida e moderna
-
 ---
 
 ## <a name="c4"></a>4. Desenvolvimento da Aplicação Web (Semana 8)
 
-### 4.1 Demonstração do Sistema Web (Semana 8) [NEW - Week 8]
+### 4.1 Demonstração do Sistema Web (Semana 8)
 
-**VIDEO: [INSERIR LINK DO VÍDEO DEMONSTRATIVO]**
+*VIDEO: Insira o link do vídeo demonstrativo nesta seção*
+*Descreva e ilustre aqui o desenvolvimento do sistema web completo, explicando brevemente o que foi entregue em termos de código e sistema. Utilize prints de tela para ilustrar.*
 
-O sistema MyQuote foi desenvolvido como uma aplicação web completa e funcional para gerenciamento de citações, implementando todas as funcionalidades planejadas com alta qualidade técnica e experiência do usuário. Esta seção apresenta uma demonstração abrangente do sistema finalizado, destacando suas características técnicas, funcionalidades implementadas e valor entregue.
+### 4.2 Conclusões e Trabalhos Futuros (Semana 8)
 
-#### 4.1.1 Visão Geral do Sistema Implementado
+*Indique pontos fortes e pontos a melhorar de maneira geral.*
+*Relacione também quaisquer outras ideias que você tenha para melhorias futuras.*
 
-**Características Técnicas Principais:**
-- **Arquitetura**: MVC (Model-View-Controller) com separação clara de responsabilidades
-- **Backend**: Node.js + Express.js com API RESTful completa
-- **Frontend**: EJS templates com design responsivo e tema library elegante
-- **Banco de Dados**: PostgreSQL com esquema normalizado e otimizado
-- **Autenticação**: Sistema seguro baseado em sessões com hash bcrypt
-- **Responsividade**: Design mobile-first com suporte completo a dispositivos móveis
 
-**Funcionalidades Core Implementadas:**
-- ✅ **Gerenciamento de Usuários**: Registro, login, logout e sessões
-- ✅ **CRUD de Citações**: Criação, visualização, edição e exclusão de frases
-- ✅ **Gestão de Autores**: Cadastro e organização de autores com informações detalhadas
-- ✅ **Sistema de Tópicos**: Categorização flexível com associações múltiplas
-- ✅ **Filtros e Busca**: Navegação intuitiva por autor, tópico e conteúdo
-- ✅ **Interface Responsiva**: Experiência otimizada em todos os dispositivos
 
-INSERT IMAGE: [Screenshot da página inicial do sistema MyQuote mostrando a interface completa com navegação, hero section e cards de citações]
+## <a name="c5"></a>5. Referências
 
-#### 4.1.2 Demonstração das Funcionalidades Principais
-
-**1. Sistema de Autenticação e Gestão de Usuários**
-
-O sistema implementa um fluxo completo de autenticação segura:
-
-*Registro de Usuário:*
-- Formulário com validação em tempo real
-- Verificação de unicidade de email e username
-- Hash seguro de senhas com bcrypt
-- Feedback visual de sucesso/erro
-
-*Login e Sessões:*
-- Autenticação baseada em credenciais
-- Gerenciamento de sessões com express-session
-- Redirecionamento inteligente pós-login
-- Logout seguro com limpeza de sessão
-
-INSERT IMAGE: [Screenshot das páginas de registro e login mostrando validação de formulários e feedback visual]
-
-**2. Gerenciamento de Citações (CRUD Completo)**
-
-*Criação de Citações:*
-- Interface intuitiva com formulário estruturado
-- Seleção de autor via modal elegante
-- Seleção múltipla de tópicos com checkboxes estilizados
-- Campo de descrição para contexto adicional
-- Validação robusta de dados
-
-*Visualização e Navegação:*
-- Cards elegantes com design library theme
-- Informações do autor com nacionalidade
-- Indicadores visuais de tópicos (formas geométricas coloridas)
-- Layout responsivo adaptável
-- Hover effects informativos
-
-*Edição e Exclusão:*
-- Interface consistente para modificações
-- Confirmações de segurança para exclusões
-- Preservação de relacionamentos
-- Feedback visual de operações
-
-INSERT IMAGE: [Screenshot do formulário de criação de citações mostrando modal de seleção de autor e interface de tópicos]
-
-**3. Sistema de Autores e Tópicos**
-
-*Gestão de Autores:*
-- Cadastro com informações completas (nome, nacionalidade, biografia)
-- Visualização organizada em cards informativos
-- Contadores de citações por autor
-- Links diretos para filtros específicos
-
-*Sistema de Tópicos:*
-- Criação e organização de categorias temáticas
-- Associações flexíveis N:N com citações
-- Representação visual através de formas geométricas
-- Cores diferenciadas para identificação rápida
-
-INSERT IMAGE: [Screenshot da página de autores e tópicos mostrando organização em grid e informações estatísticas]
-
-#### 4.1.3 Interface e Experiência do Usuário
-
-**Design System Library Theme:**
-- **Paleta de Cores**: Tons quentes e elegantes (mahogany, slate gray, cream)
-- **Tipografia**: Combinação harmoniosa de Playfair Display e Inter
-- **Componentes**: Cards com gradientes sutis e sombras elegantes
-- **Iconografia**: Formas geométricas para representação visual de tópicos
-
-**Responsividade e Acessibilidade:**
-- **Mobile-First**: Design otimizado para dispositivos móveis
-- **Touch Targets**: Elementos interativos com tamanho adequado (44px+)
-- **Navegação Mobile**: Menu hamburger com animações suaves
-- **Acessibilidade**: Semântica HTML, ARIA labels, contraste adequado
-
-**Estados e Feedback:**
-- **Loading States**: Indicadores visuais durante operações
-- **Success/Error**: Mensagens contextuais e não-intrusivas
-- **Hover Effects**: Feedback visual para interações
-- **Empty States**: Interfaces informativas quando não há dados
-
-INSERT IMAGE: [Screenshot comparativo mostrando a responsividade em desktop, tablet e mobile]
-
-#### 4.1.4 Arquitetura e Qualidade Técnica
-
-**Backend Robusto:**
-- **API RESTful**: Endpoints bem estruturados com códigos HTTP apropriados
-- **Validação**: Verificação robusta de dados em múltiplas camadas
-- **Error Handling**: Tratamento consistente de erros e exceções
-- **Security**: Hash de senhas, validação de sessões, sanitização de dados
-- **Performance**: Queries otimizadas, connection pooling, retry logic
-
-**Frontend Moderno:**
-- **Template Engine**: EJS com sistema de layouts e componentes
-- **CSS Modular**: Organização em base, components e pages
-- **JavaScript**: Fetch API para comunicação assíncrona
-- **Bootstrap Integration**: Framework CSS com customizações elegantes
-
-**Banco de Dados Otimizado:**
-- **Esquema Normalizado**: Estrutura eficiente sem redundâncias
-- **Relacionamentos**: Foreign keys e junction tables bem definidas
-- **Índices**: Otimização para consultas frequentes
-- **Integridade**: Constraints e validações a nível de banco
-
-INSERT IMAGE: [Screenshot do código mostrando estrutura MVC e organização de arquivos]
-
-#### 4.1.5 Fluxos de Uso Demonstrados
-
-**Fluxo 1: Usuário Novo**
-1. Acesso à página inicial
-2. Navegação para registro
-3. Criação de conta com validação
-4. Login automático
-5. Exploração de citações existentes
-6. Criação da primeira citação
-
-**Fluxo 2: Usuário Experiente**
-1. Login rápido
-2. Navegação por filtros de autor/tópico
-3. Criação de nova citação com autor existente
-4. Associação a múltiplos tópicos
-5. Visualização do resultado
-6. Edição de citação existente
-
-**Fluxo 3: Navegação Mobile**
-1. Acesso via dispositivo móvel
-2. Uso do menu hamburger
-3. Navegação touch-friendly
-4. Criação de citação em mobile
-5. Visualização responsiva
-
-INSERT IMAGE: [Sequência de screenshots mostrando os principais fluxos de uso do sistema]
-
-#### 4.1.6 Métricas e Performance
-
-**Performance Técnica:**
-- **Tempo de Carregamento**: < 2 segundos para página inicial
-- **Responsividade da API**: < 500ms para operações CRUD
-- **Compatibilidade**: Suporte a navegadores modernos (Chrome, Firefox, Safari, Edge)
-- **Responsividade**: Breakpoints otimizados para todos os dispositivos
-
-**Qualidade do Código:**
-- **Organização**: Estrutura MVC clara e bem documentada
-- **Reutilização**: Componentes modulares e reutilizáveis
-- **Manutenibilidade**: Código limpo com separação de responsabilidades
-- **Escalabilidade**: Arquitetura preparada para expansões futuras
-
-#### 4.1.7 Conclusão da Demonstração
-
-O sistema MyQuote representa uma implementação completa e profissional de uma aplicação web moderna, demonstrando domínio técnico em todas as camadas do desenvolvimento full-stack. A combinação de backend robusto, frontend elegante e experiência do usuário cuidadosamente planejada resulta em uma aplicação funcional, escalável e visualmente atrativa.
-
-**Principais Destaques:**
-- ✅ **Funcionalidade Completa**: Todas as features planejadas implementadas
-- ✅ **Qualidade Técnica**: Código bem estruturado seguindo boas práticas
-- ✅ **Design Elegante**: Interface moderna com tema library único
-- ✅ **Responsividade**: Experiência otimizada em todos os dispositivos
-- ✅ **Performance**: Sistema rápido e eficiente
-- ✅ **Segurança**: Implementação segura de autenticação e validação
-- ✅ **Escalabilidade**: Arquitetura preparada para crescimento futuro
-
-O sistema está pronto para uso em produção e demonstra competência técnica em desenvolvimento web full-stack moderno.
-
-### 4.2 Conclusões e Trabalhos Futuros (Semana 8) [NEW - Week 8]
-
-#### 4.2.1 Análise Geral do Projeto
-
-O desenvolvimento do sistema MyQuote representou uma jornada completa de aprendizado em desenvolvimento web full-stack, desde a concepção inicial até a implementação de uma aplicação funcional e profissional. O projeto demonstrou com sucesso a aplicação prática de conceitos fundamentais de engenharia de software, arquitetura web e experiência do usuário.
-
-#### 4.2.2 Pontos Fortes Identificados
-
-**Excelência Técnica:**
-- **Arquitetura Sólida**: Implementação consistente do padrão MVC com separação clara de responsabilidades, facilitando manutenção e escalabilidade
-- **Qualidade do Código**: Estrutura bem organizada, código limpo e documentado, seguindo boas práticas de desenvolvimento
-- **Segurança Robusta**: Sistema de autenticação seguro com hash bcrypt, validação de dados em múltiplas camadas e proteção contra vulnerabilidades comuns
-- **Performance Otimizada**: Queries de banco otimizadas, connection pooling, retry logic e carregamento eficiente de recursos
-
-**Design e Experiência do Usuário:**
-- **Identidade Visual Única**: Tema library elegante e coeso que diferencia a aplicação e cria uma experiência memorável
-- **Responsividade Completa**: Design mobile-first que funciona perfeitamente em todos os dispositivos, com navegação touch-friendly
-- **Acessibilidade**: Implementação de padrões de acessibilidade (WCAG) com semântica HTML adequada e suporte a leitores de tela
-- **Feedback Visual**: Estados de interface bem definidos com loading, success, error e empty states informativos
-
-**Funcionalidades Robustas:**
-- **CRUD Completo**: Operações de criação, leitura, atualização e exclusão implementadas para todas as entidades
-- **Sistema de Relacionamentos**: Gestão eficiente de relacionamentos N:N entre citações e tópicos
-- **Filtros e Navegação**: Sistema intuitivo de filtros por autor, tópico e busca textual
-- **Gestão de Sessões**: Autenticação persistente com logout seguro e proteção de rotas
-
-**Integração Frontend-Backend:**
-- **API RESTful**: Endpoints bem estruturados seguindo padrões REST com códigos HTTP apropriados
-- **Comunicação Assíncrona**: Uso eficiente da Fetch API para operações sem recarregamento de página
-- **Tratamento de Erros**: Error handling robusto tanto no frontend quanto no backend
-- **Validação Consistente**: Validação de dados em múltiplas camadas (frontend, backend, banco de dados)
-
-#### 4.2.3 Pontos de Melhoria Identificados
-
-**Aspectos Técnicos:**
-- **Testes Automatizados**: Implementação mais abrangente de testes unitários, de integração e end-to-end para garantir qualidade contínua
-- **Documentação da API**: Criação de documentação interativa (Swagger/OpenAPI) para facilitar integração e manutenção
-- **Logging Avançado**: Sistema de logs mais robusto com diferentes níveis (debug, info, warn, error) e rotação de arquivos
-- **Monitoramento**: Implementação de métricas de performance e health checks mais detalhados
-
-**Performance e Escalabilidade:**
-- **Cache**: Implementação de sistema de cache (Redis) para consultas frequentes e sessões
-- **Otimização de Queries**: Análise e otimização adicional de consultas complexas com múltiplos JOINs
-- **Compressão**: Implementação de compressão gzip para reduzir tamanho de transferência
-- **CDN**: Configuração de CDN para servir assets estáticos com melhor performance global
-
-**Experiência do Usuário:**
-- **Busca Avançada**: Implementação de busca full-text com filtros combinados e sugestões automáticas
-- **Paginação**: Sistema de paginação para listas grandes de citações
-- **Favoritos**: Funcionalidade para usuários marcarem citações favoritas
-- **Compartilhamento**: Opções para compartilhar citações em redes sociais
-
-**Segurança:**
-- **Rate Limiting**: Implementação de limitação de taxa para prevenir ataques de força bruta
-- **HTTPS**: Configuração de SSL/TLS para comunicação segura
-- **Sanitização**: Melhorias na sanitização de dados para prevenir XSS e injection attacks
-- **Auditoria**: Sistema de logs de auditoria para rastrear ações dos usuários
-
-#### 4.2.4 Trabalhos Futuros e Expansões
-
-**Funcionalidades Avançadas:**
-
-*Sistema de Recomendações:*
-- Algoritmo de recomendação baseado em preferências do usuário
-- Sugestões de citações relacionadas por tópico ou autor
-- Sistema de tags automáticas usando processamento de linguagem natural
-- Análise de sentimento para categorização emocional de citações
-
-*Recursos Sociais:*
-- Sistema de comentários e discussões sobre citações
-- Perfis públicos de usuários com suas citações favoritas
-- Sistema de seguir outros usuários e suas descobertas
-- Feed personalizado com atividades de usuários seguidos
-
-*Funcionalidades de Curadoria:*
-- Sistema de moderação para citações públicas
-- Verificação de autenticidade de citações com fontes
-- Sistema de votação para qualidade de citações
-- Coleções temáticas curadas por especialistas
-
-**Melhorias Técnicas:**
-
-*Arquitetura e Performance:*
-- Migração para arquitetura de microserviços para maior escalabilidade
-- Implementação de GraphQL para consultas mais eficientes
-- Sistema de cache distribuído com Redis Cluster
-- Implementação de WebSockets para atualizações em tempo real
-
-*Integrações Externas:*
-- API de verificação de citações com bases de dados acadêmicas
-- Integração com redes sociais para importação de citações
-- Sistema de backup automático em cloud storage
-- Integração com serviços de tradução para citações multilíngues
-
-*Mobile e PWA:*
-- Desenvolvimento de Progressive Web App (PWA) com funcionalidades offline
-- Aplicativo móvel nativo para iOS e Android
-- Sincronização cross-platform de dados do usuário
-- Notificações push para novas citações de autores favoritos
-
-**Expansões de Negócio:**
-
-*Monetização:*
-- Sistema de assinatura premium com funcionalidades avançadas
-- Marketplace de livros relacionados às citações
-- Parcerias com editoras para promoção de obras
-- Sistema de afiliados para recomendações de livros
-
-*Educacional:*
-- Módulo educacional para escolas e universidades
-- Sistema de quiz baseado em citações
-- Ferramentas para professores criarem atividades
-- Integração com plataformas de e-learning
-
-#### 4.2.5 Lições Aprendidas
-
-**Desenvolvimento Técnico:**
-- A importância da arquitetura bem planejada desde o início do projeto
-- Valor da implementação incremental com testes contínuos
-- Benefícios da separação clara entre frontend e backend
-- Necessidade de considerar performance desde as primeiras iterações
-
-**Design e UX:**
-- Importância de manter consistência visual em toda a aplicação
-- Valor do design mobile-first para experiência universal
-- Necessidade de feedback visual claro para todas as ações do usuário
-- Importância da acessibilidade como requisito fundamental, não opcional
-
-**Gestão de Projeto:**
-- Benefícios da documentação contínua durante o desenvolvimento
-- Importância de definir escopo claro e priorizar funcionalidades core
-- Valor de iterações rápidas com feedback constante
-- Necessidade de considerar manutenibilidade futura desde o início
-
-#### 4.2.6 Conclusão Final
-
-O projeto MyQuote alcançou com sucesso todos os objetivos propostos, resultando em uma aplicação web completa, funcional e profissional. A implementação demonstra competência técnica sólida em desenvolvimento full-stack, desde a modelagem de dados até a experiência do usuário final.
-
-**Principais Conquistas:**
-- ✅ **Sistema Completo**: Aplicação funcional com todas as features planejadas
-- ✅ **Qualidade Técnica**: Código bem estruturado seguindo boas práticas
-- ✅ **Design Profissional**: Interface elegante e experiência do usuário cuidadosa
-- ✅ **Arquitetura Escalável**: Base sólida para expansões futuras
-- ✅ **Aprendizado Consolidado**: Domínio prático de tecnologias web modernas
-
-O sistema está pronto para uso em ambiente de produção e serve como uma base sólida para futuras expansões e melhorias. O projeto representa não apenas uma aplicação funcional, mas também um portfólio demonstrativo de competências em desenvolvimento web full-stack moderno.
-
-**Impacto Educacional:**
-Este projeto proporcionou experiência prática valiosa em todas as fases do desenvolvimento web, desde a concepção e planejamento até a implementação e otimização. As competências desenvolvidas incluem arquitetura de software, desenvolvimento frontend e backend, design de banco de dados, experiência do usuário e boas práticas de segurança.
-
-O MyQuote representa um marco importante no desenvolvimento de competências técnicas e serve como fundação sólida para projetos futuros mais complexos e ambiciosos.
-
-
-
-## <a name="c5"></a>5. Referências [UPDATED]
-
-### 5.1 Documentação Técnica e Frameworks
-
-**Node.js e Express.js:**
-- Node.js Foundation. *Node.js Documentation*. Disponível em: https://nodejs.org/docs/. Acesso em: 2024.
-- Express.js Team. *Express.js Guide*. Disponível em: https://expressjs.com/. Acesso em: 2024.
-- Mozilla Developer Network. *Express/Node introduction*. Disponível em: https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs. Acesso em: 2024.
-
-**PostgreSQL e Banco de Dados:**
-- PostgreSQL Global Development Group. *PostgreSQL Documentation*. Disponível em: https://www.postgresql.org/docs/. Acesso em: 2024.
-- Hernandez, M. J.; Viescas, J. L. *Database Design for Mere Mortals: A Hands-On Guide to Relational Database Design*. 4th ed. Addison-Wesley Professional, 2020.
-
-**Frontend e Templates:**
-- EJS Team. *EJS Documentation*. Disponível em: https://ejs.co/. Acesso em: 2024.
-- Bootstrap Team. *Bootstrap Documentation v5.1*. Disponível em: https://getbootstrap.com/docs/5.1/. Acesso em: 2024.
-- Mozilla Developer Network. *HTML: HyperText Markup Language*. Disponível em: https://developer.mozilla.org/en-US/docs/Web/HTML. Acesso em: 2024.
-
-### 5.2 Arquitetura e Padrões de Desenvolvimento
-
-**Padrão MVC:**
-- Fowler, M. *Patterns of Enterprise Application Architecture*. Addison-Wesley Professional, 2002.
-- Gamma, E.; Helm, R.; Johnson, R.; Vlissides, J. *Design Patterns: Elements of Reusable Object-Oriented Software*. Addison-Wesley Professional, 1994.
-
-**APIs RESTful:**
-- Fielding, R. T. *Architectural Styles and the Design of Network-based Software Architectures*. Doctoral dissertation, University of California, Irvine, 2000.
-- Richardson, L.; Ruby, S. *RESTful Web Services*. O'Reilly Media, 2007.
-
-### 5.3 Segurança e Autenticação
-
-**Segurança Web:**
-- OWASP Foundation. *OWASP Top Ten Web Application Security Risks*. Disponível em: https://owasp.org/www-project-top-ten/. Acesso em: 2024.
-- bcrypt.js Documentation. Disponível em: https://github.com/dcodeIO/bcrypt.js. Acesso em: 2024.
-
-**Autenticação e Sessões:**
-- Express Session Documentation. Disponível em: https://github.com/expressjs/session. Acesso em: 2024.
-- Mozilla Developer Network. *HTTP cookies*. Disponível em: https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies. Acesso em: 2024.
-
-### 5.4 Design e Experiência do Usuário
-
-**Design Responsivo:**
-- Marcotte, E. *Responsive Web Design*. A Book Apart, 2011.
-- W3C Web Accessibility Initiative. *Web Content Accessibility Guidelines (WCAG) 2.1*. Disponível em: https://www.w3.org/WAI/WCAG21/quickref/. Acesso em: 2024.
-
-**Tipografia e Cores:**
-- Google Fonts. *Playfair Display*. Disponível em: https://fonts.google.com/specimen/Playfair+Display. Acesso em: 2024.
-- Google Fonts. *Inter*. Disponível em: https://fonts.google.com/specimen/Inter. Acesso em: 2024.
-
-### 5.5 Ferramentas de Desenvolvimento
-
-**Controle de Versão:**
-- Chacon, S.; Straub, B. *Pro Git*. 2nd ed. Apress, 2014. Disponível em: https://git-scm.com/book. Acesso em: 2024.
-- GitHub Documentation. Disponível em: https://docs.github.com/. Acesso em: 2024.
-
-**Ambiente de Desenvolvimento:**
-- Visual Studio Code Documentation. Disponível em: https://code.visualstudio.com/docs. Acesso em: 2024.
-- npm Documentation. Disponível em: https://docs.npmjs.com/. Acesso em: 2024.
-
-### 5.6 Metodologias e Boas Práticas
-
-**Desenvolvimento Web:**
-- Martin, R. C. *Clean Code: A Handbook of Agile Software Craftsmanship*. Prentice Hall, 2008.
-- Hunt, A.; Thomas, D. *The Pragmatic Programmer: Your Journey to Mastery*. 2nd ed. Addison-Wesley Professional, 2019.
-
-### 5.7 Recursos Educacionais
-
-**Cursos e Tutoriais:**
-- Mozilla Developer Network. *Learn Web Development*. Disponível em: https://developer.mozilla.org/en-US/docs/Learn. Acesso em: 2024.
-- W3Schools. *Web Development Tutorials*. Disponível em: https://www.w3schools.com/. Acesso em: 2024.
-
-**Comunidades e Fóruns:**
-- Stack Overflow. *Programming Q&A Platform*. Disponível em: https://stackoverflow.com/. Acesso em: 2024.
-- GitHub Community. Disponível em: https://github.com/community. Acesso em: 2024.
+_Incluir as principais referências de seu projeto, para que o leitor possa consultar caso ele se interessar em aprofundar._<br>
 
 ---
 ---
