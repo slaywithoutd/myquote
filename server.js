@@ -327,33 +327,6 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Health check endpoint
-app.get('/health', async (req, res) => {
-  try {
-    const dbHealthy = await db.healthCheck();
-    if (dbHealthy) {
-      res.status(200).json({
-        status: 'healthy',
-        database: 'connected',
-        timestamp: new Date().toISOString()
-      });
-    } else {
-      res.status(503).json({
-        status: 'unhealthy',
-        database: 'disconnected',
-        timestamp: new Date().toISOString()
-      });
-    }
-  } catch (error) {
-    res.status(503).json({
-      status: 'unhealthy',
-      database: 'error',
-      error: error.message,
-      timestamp: new Date().toISOString()
-    });
-  }
-});
-
 // Conectar ao banco e iniciar o servidor
 const startServer = async () => {
   try {
@@ -361,15 +334,11 @@ const startServer = async () => {
     const client = await db.connect();
     await client.query('SELECT 1');
     client.release();
-    console.log('✅ Conectado ao banco de dados PostgreSQL');
 
     app.listen(PORT, () => {
-      console.log(`🚀 Servidor rodando na porta ${PORT}`);
-      console.log(`🔍 Health check disponível em: http://localhost:${PORT}/health`);
+      console.log(`Servidor rodando na porta ${PORT}`);
     });
   } catch (err) {
-    console.error('❌ Erro ao conectar ao banco de dados:', err);
-    console.log('🔄 Tentando novamente em 5 segundos...');
     setTimeout(startServer, 5000);
   }
 };

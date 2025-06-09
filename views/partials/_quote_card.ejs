@@ -27,12 +27,9 @@
     <!-- Action buttons for logged in users -->
     <% if (typeof user !== 'undefined' && user) { %>
       <div class="quote-actions mt-2">
-        <a href="/quotes/edit/<%= quote.id %>" class="btn btn-sm btn-outline-primary">
+        <a href="/quotes/edit/<%= quote.id %>" class="btn btn-sm btn-discrete edit-btn">
           <i class="fas fa-edit"></i> Editar
         </a>
-        <button class="btn btn-sm btn-outline-danger ms-1" onclick="deleteQuoteFromCard('<%= quote.id %>')"
-          <i class="fas fa-trash"></i> Excluir
-        </button>
       </div>
     <% } %>
   </div>

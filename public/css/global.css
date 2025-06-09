@@ -1,4 +1,4 @@
-/* Base */
+/* Base - Updated for hamburger menu fix */
 @import './base/variables.css';
 @import './base/reset.css';
 @import './base/typography.css';
@@ -788,12 +788,30 @@ header .navbar {
   margin: 0 !important;
 }
 
-header .navbar-dark {
+/* Override any Bootstrap navbar background classes */
+header .navbar,
+header .navbar-dark,
+header .bg-dark,
+header .navbar-light {
   background-color: var(--surface) !important;
 }
 
-header .bg-dark {
-  background-color: var(--surface) !important;
+/* Force navbar toggler styling - highest specificity */
+header .navbar .navbar-toggler,
+.navbar-expand-lg .navbar-toggler {
+  background-color: var(--primary) !important;
+  border: 2px solid var(--primary) !important;
+  border-radius: var(--border-radius) !important;
+  padding: 0.5rem !important;
+}
+
+/* Force navbar toggler icon styling - highest specificity */
+header .navbar .navbar-toggler .navbar-toggler-icon,
+.navbar-expand-lg .navbar-toggler .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%23ffffff' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2.5' d='m4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+  width: 1.5rem !important;
+  height: 1.5rem !important;
+  opacity: 1 !important;
 }
 
 header .navbar a {
@@ -836,39 +854,49 @@ header .navbar-brand:hover {
   color: var(--primary-hover) !important;
 }
 
-/* Beautiful Mobile Navbar Toggler */
-.navbar-toggler {
+/* Simple Mobile Navbar Toggler - Brown button with three lines */
+header .navbar-toggler,
+.navbar .navbar-toggler {
   border: 2px solid var(--primary) !important;
   border-radius: var(--border-radius) !important;
   padding: 0.5rem !important;
-  background: var(--surface) !important;
-  transition: all var(--transition-normal) !important;
-  box-shadow: 0 2px 6px rgba(139, 69, 19, 0.1) !important;
-}
-
-.navbar-toggler:hover {
   background: var(--primary) !important;
-  border-color: var(--primary-hover) !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(139, 69, 19, 0.2) !important;
+  transition: none !important;
+  box-shadow: none !important;
 }
 
-.navbar-toggler:focus {
-  box-shadow:
-    0 0 0 3px rgba(139, 69, 19, 0.2),
-    0 2px 6px rgba(139, 69, 19, 0.1) !important;
+.navbar-toggler:hover,
+.navbar-toggler:focus,
+.navbar-toggler:active {
+  background: var(--primary) !important;
+  border-color: var(--primary) !important;
+  transform: none !important;
+  box-shadow: none !important;
   outline: none !important;
 }
 
-/* Always visible hamburger icon */
-.navbar-toggler-icon {
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%23%238b4513' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2.5' d='m4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+/* Simple hamburger icon - White lines on brown background */
+header .navbar-toggler-icon,
+.navbar .navbar-toggler-icon,
+.navbar-toggler .navbar-toggler-icon,
+.navbar-dark .navbar-toggler-icon,
+.navbar-light .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%23ffffff' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2.5' d='m4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
   width: 1.5rem !important;
   height: 1.5rem !important;
   opacity: 1 !important;
+  display: inline-block !important;
+  vertical-align: middle !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-size: 100% !important;
+  filter: none !important;
 }
 
-.navbar-toggler:hover .navbar-toggler-icon {
+/* Keep same appearance always - white lines */
+.navbar-toggler:hover .navbar-toggler-icon,
+.navbar-toggler:focus .navbar-toggler-icon,
+.navbar-toggler:active .navbar-toggler-icon {
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%23ffffff' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2.5' d='m4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
 }
 
@@ -1005,8 +1033,8 @@ header .navbar-brand:hover {
       inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
   }
 
-  /* User greeting text */
-  .navbar-nav span.nav-link {
+  /* User greeting text - updated for better styling */
+  .navbar-nav span.nav-link:not(.user-indicator) {
     background: var(--background-secondary) !important;
     color: var(--text-primary) !important;
     font-style: italic !important;
@@ -1746,6 +1774,10 @@ figure.quote-card {
 
   .navbar-toggler {
     padding: 0.4rem !important;
+    transition: none !important;
+    box-shadow: none !important;
+    background: var(--primary) !important;
+    border-color: var(--primary) !important;
   }
 
   .navbar-toggler-icon {
@@ -1931,4 +1963,148 @@ footer {
     background-color: var(--primary);
     border-color: var(--primary);
     color: var(--text-light);
+}
+
+/* User Login Indicator Styles */
+.user-indicator {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  background: linear-gradient(135deg, var(--surface-elevated) 0%, var(--surface) 100%) !important;
+  color: var(--text-primary) !important;
+  border-radius: var(--border-radius) !important;
+  padding: 0.5rem 1rem !important;
+  font-weight: 500 !important;
+}
+
+.user-indicator i {
+  color: var(--primary) !important;
+  font-size: 1.1rem !important;
+}
+
+.user-status-badge {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
+  color: white !important;
+  font-size: 0.7rem !important;
+  padding: 0.2rem 0.5rem !important;
+  border-radius: 10px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  box-shadow: 0 1px 3px rgba(40, 167, 69, 0.3) !important;
+  animation: pulse-online 2s infinite !important;
+}
+
+@keyframes pulse-online {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* Discrete Action Buttons */
+.btn-discrete {
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  color: var(--text-secondary) !important;
+  padding: 0.25rem 0.5rem !important;
+  font-size: 0.8rem !important;
+  border-radius: var(--border-radius-small) !important;
+  transition: all var(--transition-normal) !important;
+  opacity: 0.6 !important;
+}
+
+.btn-discrete:hover {
+  opacity: 1 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
+}
+
+.btn-discrete.edit-btn:hover {
+  background: var(--primary) !important;
+  color: var(--text-light) !important;
+  border-color: var(--primary) !important;
+}
+
+.btn-discrete.delete-btn:hover {
+  background: var(--danger) !important;
+  color: var(--text-light) !important;
+  border-color: var(--danger) !important;
+}
+
+/* Quote Actions Container */
+.quote-actions {
+  display: flex !important;
+  gap: 0.5rem !important;
+  align-items: center !important;
+  margin-top: 0.75rem !important;
+  padding-top: 0.5rem !important;
+  border-top: 1px solid var(--border-color) !important;
+  opacity: 0.8 !important;
+  transition: opacity var(--transition-normal) !important;
+}
+
+.quote-card:hover .quote-actions {
+  opacity: 1 !important;
+}
+
+/* Desktop specific styles */
+@media (min-width: 992px) {
+  .user-indicator {
+    margin: 0 0.5rem !important;
+  }
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .user-indicator {
+    font-size: 0.9rem !important;
+    padding: 0.4rem 0.8rem !important;
+    margin: 0.5rem 0 !important;
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  .user-status-badge {
+    font-size: 0.6rem !important;
+    padding: 0.15rem 0.4rem !important;
+  }
+
+  .btn-discrete {
+    font-size: 0.75rem !important;
+    padding: 0.2rem 0.4rem !important;
+  }
+}
+
+/* Author Selection Button Styling */
+#selectAuthorBtn {
+  text-align: left !important;
+  padding: 0.75rem 1rem !important;
+  border: 2px solid var(--border-color) !important;
+  background: var(--surface) !important;
+  color: var(--text-primary) !important;
+  position: relative !important;
+}
+
+#selectAuthorBtn:hover {
+  border-color: var(--primary) !important;
+  background: var(--surface-elevated) !important;
+}
+
+#selectAuthorBtn::after {
+  content: '▼';
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+
+#selectedAuthorText {
+  display: block;
+  width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  padding-right: 2rem;
 }

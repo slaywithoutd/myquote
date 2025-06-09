@@ -396,7 +396,7 @@ O sistema implementa uma navegação intuitiva e responsiva através de um navba
 
 <div align="center">
 <sup>Figura 8 - Segunda Página, com os autores e tópicos</sup>
-<img src="/documentos/assets/secondPage.png"/>
+<img src="/documentos/assets/author-topics.png"/>
 <sup>Fonte: Autoria própria, 2025</sup>
 </div>
 
@@ -413,6 +413,11 @@ O sistema implementa uma navegação intuitiva e responsiva através de um navba
 <sup>Fonte: Autoria própria, 2025</sup>
 </div>
 
+<div align="center">
+<sup>Figura 10 - Formulário de Login</sup>
+<img src="/documentos/assets/loginform.png"/>
+<sup>Fonte: Autoria própria, 2025</sup>
+</div>
 
 #### 2.7.4 Componentes e Funcionalidades Interativas
 
@@ -441,8 +446,6 @@ O sistema implementa uma navegação intuitiva e responsiva através de um navba
 - **Posicionamento**: Canto superior direito dos cards
 - **Tooltip**: Informações adicionais no hover
 
-INSERT IMAGE: [Close-up dos quote cards implementados mostrando a estrutura semântica HTML, tipografia elegante, informações do autor com nacionalidade e integração com dados do backend]
-
 #### 2.7.5 Responsividade e Acessibilidade
 
 **Design Mobile-First:**
@@ -463,8 +466,6 @@ INSERT IMAGE: [Close-up dos quote cards implementados mostrando a estrutura sem�
 - **Imagens Responsivas**: Adaptação automática de imagens
 - **Lazy Loading**: Implementação para elementos não críticos
 - **Minificação**: CSS e JavaScript otimizados para produção
-
-
 
 #### 2.7.6 Integração Frontend-Backend
 

@@ -1,8 +1,8 @@
 {
     "$schema": "http://json.schemastore.org/package",
-    "name": "mvc-boilerplate",
+    "name": "myquote",
     "version": "1.0.0",
-    "description": "Boilerplate para estrutura MVC em JavaScript com PostgreSQL e testes",
+    "description": "Aplicação web para registro, organização e consulta de frases marcantes com arquitetura MVC",
     "main": "server.js",
     "scripts": {
         "start": "node server.js",
@@ -34,14 +34,14 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/afonsobrandaointeli/mvc-boilerplate.git"
+        "url": "git+https://github.com/Inteli-College/2025-1A-T17-IN01-G03.git"
     },
-    "keywords": [],
-    "author": "",
-    "license": "ISC",
+    "keywords": ["quotes", "mvc", "nodejs", "express", "postgresql", "ejs"],
+    "author": "Inteli College - Grupo 03",
+    "license": "MIT",
     "type": "commonjs",
     "bugs": {
-        "url": "https://github.com/afonsobrandaointeli/mvc-boilerplate/issues"
+        "url": "https://github.com/Inteli-College/2025-1A-T17-IN01-G03/issues"
     },
-    "homepage": "https://github.com/afonsobrandaointeli/mvc-boilerplate#readme"
+    "homepage": "https://github.com/Inteli-College/2025-1A-T17-IN01-G03#readme"
 }

@@ -23,18 +23,9 @@
             </div>
 
             <div class="mb-3">
-              <label for="author_name" class="form-label">Autor</label>
-              <div class="input-group">
-                <input
-                  type="text"
-                  class="form-control"
-                  id="author_name"
-                  name="author_name"
-                  placeholder="Digite o nome do autor ou clique para selecionar"
-                  value="<%= quote && quote.author_name ? quote.author_name : '' %>"
-                  required
-                  readonly
-                >
+              <label class="form-label">Autor</label>
+              <div class="d-grid">
+                <input type="hidden" id="author_name" name="author_name" value="<%= quote && quote.author_name ? quote.author_name : '' %>" required>
                 <% if (quote && quote.author_id) { %>
                   <input type="hidden" id="author_id" value="<%= quote.author_id %>">
                 <% } %>
@@ -43,8 +34,11 @@
                   class="btn btn-outline-primary"
                   data-bs-toggle="modal"
                   data-bs-target="#authorModal"
+                  id="selectAuthorBtn"
                 >
-                  Selecionar Autor
+                  <span id="selectedAuthorText">
+                    <%= quote && quote.author_name ? quote.author_name : 'Selecionar Autor' %>
+                  </span>
                 </button>
               </div>
             </div>
@@ -170,7 +164,24 @@ document.addEventListener('DOMContentLoaded', function() {
     authorOptions.forEach(option => {
         option.addEventListener('click', function() {
             const authorName = this.dataset.authorName;
+            const authorId = this.dataset.authorId;
+
+            // Atualizar campos hidden
             document.getElementById('author_name').value = authorName;
+            if (document.getElementById('author_id')) {
+                document.getElementById('author_id').value = authorId;
+            } else {
+                // Criar campo hidden para author_id se não existir
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.id = 'author_id';
+                hiddenInput.name = 'author_id';
+                hiddenInput.value = authorId;
+                document.getElementById('quoteForm').appendChild(hiddenInput);
+            }
+
+            // Atualizar texto do botão
+            document.getElementById('selectedAuthorText').textContent = authorName;
 
             // Fechar modal
             const modalElement = document.getElementById('authorModal');
