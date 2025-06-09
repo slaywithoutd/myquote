@@ -22,34 +22,5 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Mobile Menu Enhancement Script -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const navbarToggler = document.querySelector('.navbar-toggler');
-            const navbarCollapse = document.querySelector('.navbar-collapse');
-
-            if (navbarToggler && navbarCollapse) {
-                // Close menu when clicking on a link (better UX)
-                const navLinks = navbarCollapse.querySelectorAll('.nav-link');
-                navLinks.forEach(link => {
-                    link.addEventListener('click', () => {
-                        if (navbarCollapse.classList.contains('show')) {
-                            navbarToggler.click();
-                        }
-                    });
-                });
-
-                // Add visual feedback when menu opens/closes
-                navbarCollapse.addEventListener('show.bs.collapse', function() {
-                    navbarToggler.setAttribute('aria-expanded', 'true');
-                });
-
-                navbarCollapse.addEventListener('hide.bs.collapse', function() {
-                    navbarToggler.setAttribute('aria-expanded', 'false');
-                });
-            }
-        });
-    </script>
 </body>
 </html>

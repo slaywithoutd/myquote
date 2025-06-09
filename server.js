@@ -87,40 +87,47 @@ app.use('/api/topics', topicRoutes);
 app.use('/api/authors', authorRoutes);
 app.get('/authors-topics', async (req, res) => {
     try {
-        console.log('Loading authors and topics with quotes...');
-        const authors = await authorModel.getAllWithQuotes();
-        const topics = await topicModel.getAllWithQuotes();
-        console.log(`Loaded ${authors.length} authors and ${topics.length} topics`);
-
-        res.render('pages/authors-topics', {
-          pageTitle: 'Autores & Tópicos',
-          authors,
-          topics,
-          user: req.session.user
+        const authors = await authorModel.getAll();
+        const topics = await topicModel.getAll();
+        res.render('pages/authors-topics', { 
+          pageTitle: 'Autores & Tópicos', // Adicione esta linha
+          authors, 
+          topics, 
+          user: req.session.user 
         });
     } catch (error) {
       console.error('Error loading authors and topics:', error);
-        res.status(500).render('pages/error', {
-          pageTitle: 'Erro',
+        res.status(500).render('pages/error', { 
+          pageTitle: 'Erro', // Adicione esta linha
           error: 'Erro ao carregar autores e tópicos',
-          user: req.session.user
+          user: req.session.user 
         });
     }
 });
 
 // Page routes
 app.get('/login', (req, res) => {
-  res.render('pages/login', {
-    pageTitle: 'Login',
-    error: null
+  res.render('pages/login', { 
+    pageTitle: 'Login', // Adicione esta linha
+    error: null 
   });
 });
 
 app.get('/register', (req, res) => {
-  res.render('pages/register', {
-    pageTitle: 'Registrar',
-    error: null
+  res.render('pages/register', { 
+    pageTitle: 'Registrar', // Adicione esta linha
+    error: null 
   });
+});
+
+app.get('/authors-topics', async (req, res) => {
+  try {
+    const authors = await authorModel.getAll();
+    const topics = await topicModel.getAll();
+    res.render('pages/authors', { authors, topics, user: req.session.user });
+  } catch (error) {
+    res.status(500).render('error', { error: 'Internal Server Error' });
+  }
 });
 
 app.get('/quotes/new', async (req, res) => {
@@ -130,59 +137,17 @@ app.get('/quotes/new', async (req, res) => {
   try {
     const authors = await authorModel.getAll();
     const topics = await topicModel.getAll();
-    res.render('pages/quote-form', {
+    res.render('pages/quote-form', { 
       pageTitle: 'Nova Frase',
-      quote: null,
-      authors: authors,
+      quote: null, 
+      authors: authors, 
       topics: topics,
-      user: req.session.user
+      user: req.session.user 
     });
   } catch (error) {
     console.error('Error loading quote form:', error);
     res.status(500).render('pages/error', {
       error: 'Erro ao carregar formulário',
-      user: req.session.user
-    });
-  }
-});
-
-// Route for editing quotes
-app.get('/quotes/edit/:id', async (req, res) => {
-  if (!req.session.user) {
-    return res.redirect('/login');
-  }
-  try {
-    const quote = await quoteModel.getById(req.params.id);
-    if (!quote) {
-      return res.status(404).render('pages/error', {
-        pageTitle: 'Erro',
-        error: 'Frase não encontrada',
-        user: req.session.user
-      });
-    }
-
-    const authors = await authorModel.getAll();
-    const topics = await topicModel.getAll();
-
-    // Get quote topics
-    const quoteTopics = await db.query(`
-      SELECT topic_id FROM quote_topic WHERE quote_id = $1
-    `, [req.params.id]);
-
-    quote.topics = quoteTopics.rows.map(row => row.topic_id);
-
-    res.render('pages/quote-form', {
-      pageTitle: 'Editar Frase',
-      quote,
-      authors,
-      topics,
-      user: req.session.user
-    });
-  } catch (error) {
-    console.error('Error loading quote for edit:', error);
-    res.status(500).render('pages/error', {
-      pageTitle: 'Erro',
-      error: 'Erro ao carregar frase para edição',
       user: req.session.user
     });
   }
@@ -327,51 +292,14 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Health check endpoint
-app.get('/health', async (req, res) => {
-  try {
-    const dbHealthy = await db.healthCheck();
-    if (dbHealthy) {
-      res.status(200).json({
-        status: 'healthy',
-        database: 'connected',
-        timestamp: new Date().toISOString()
-      });
-    } else {
-      res.status(503).json({
-        status: 'unhealthy',
-        database: 'disconnected',
-        timestamp: new Date().toISOString()
-      });
-    }
-  } catch (error) {
-    res.status(503).json({
-      status: 'unhealthy',
-      database: 'error',
-      error: error.message,
-      timestamp: new Date().toISOString()
-    });
-  }
-});
-
 // Conectar ao banco e iniciar o servidor
-const startServer = async () => {
-  try {
-    console.log('Checking database connection...');
-    const client = await db.connect();
-    await client.query('SELECT 1');
-    client.release();
-    console.log('✅ Conectado ao banco de dados PostgreSQL');
-
+db.connect()
+  .then(() => {
+    console.log('Conectado ao banco de dados PostgreSQL');
     app.listen(PORT, () => {
-      console.log(`🚀 Servidor rodando na porta ${PORT}`);
-      console.log(`🔍 Health check disponível em: http://localhost:${PORT}/health`);
+      console.log(`Servidor rodando na porta ${PORT}`);
     });
-  } catch (err) {
-    console.error('❌ Erro ao conectar ao banco de dados:', err);
-    console.log('🔄 Tentando novamente em 5 segundos...');
-    setTimeout(startServer, 5000);
-  }
-};
-
-startServer();
+  })
+  .catch(err => {
+    console.error('Erro ao conectar ao banco de dados:', err);
+  });

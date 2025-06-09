@@ -131,61 +131,13 @@ class Quote {
   }
 
   static async update(id, data) {
-    try {
-      const { text, description, author_id } = data;
-      let query, params;
 
-      if (author_id) {
-        query = "UPDATE quotes SET text = $1, description = $2, author_id = $3 WHERE id = $4 RETURNING *";
-        params = [text, description, author_id, id];
-      } else {
-        query = "UPDATE quotes SET text = $1, description = $2 WHERE id = $3 RETURNING *";
-        params = [text, description, id];
-      }
-
-      const result = await db.query(query, params);
-      return result.rows[0];
-    } catch (error) {
-      throw new Error('Error updating quote: ' + error.message);
-    }
-  }
-
-  static async updateTopics(quoteId, topicIds) {
-    try {
-      // Remove existing topic associations
-      await db.query('DELETE FROM quote_topic WHERE quote_id = $1', [quoteId]);
-
-      // Add new topic associations
-      if (topicIds && topicIds.length > 0) {
-        for (const topicId of topicIds) {
-          await db.query(
-            'INSERT INTO quote_topic (quote_id, topic_id) VALUES ($1, $2)',
-            [quoteId, topicId]
-          );
-        }
-      }
-
-      return true;
-    } catch (error) {
-      throw new Error('Error updating quote topics: ' + error.message);
-    }
-  }
-
-  static async delete(id) {
-    try {
-      // First delete topic associations
-      await db.query('DELETE FROM quote_topic WHERE quote_id = $1', [id]);
-
-      // Then delete the quote
-      const result = await db.query(
-        'DELETE FROM quotes WHERE id = $1 RETURNING *',
-        [id]
-      );
-
-      return result.rows[0];
-    } catch (error) {
-      throw new Error('Error deleting quote: ' + error.message);
-    }
+    const result = await db.query(
+      "UPDATE quotes SET text = $1, description = $2 WHERE id = $3 RETURNING *",
+      [data.text, data.description, id]
+    );
+    
+    return result.rows[0];
   }
 
   static async delete(id) {

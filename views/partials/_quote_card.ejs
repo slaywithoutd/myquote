@@ -23,18 +23,6 @@
     <% } %>
 
     <div class="quote-author">— <%= quote.author_name %></div>
-
-    <!-- Action buttons for logged in users -->
-    <% if (typeof user !== 'undefined' && user) { %>
-      <div class="quote-actions mt-2">
-        <a href="/quotes/edit/<%= quote.id %>" class="btn btn-sm btn-outline-primary">
-          <i class="fas fa-edit"></i> Editar
-        </a>
-        <button class="btn btn-sm btn-outline-danger ms-1" onclick="deleteQuoteFromCard('<%= quote.id %>')"
-          <i class="fas fa-trash"></i> Excluir
-        </button>
-      </div>
-    <% } %>
   </div>
 
   <!-- Traditional badges kept for reference/fallback -->
@@ -46,45 +34,3 @@
     </div>
   <% } %>
 </div>
-
-<script>
-// Function to delete quote from card
-async function deleteQuoteFromCard(quoteId) {
-  if (confirm('Tem certeza que deseja excluir esta frase? Esta ação não pode ser desfeita.')) {
-    try {
-      const response = await fetch(`/api/quotes/${quoteId}`, {
-        method: 'DELETE'
-      });
-
-      if (response.ok) {
-        // Remove the card from the page
-        const quoteCard = event.target.closest('.quote-card');
-        if (quoteCard) {
-          quoteCard.remove();
-        }
-
-        // Show success message
-        const alert = document.createElement('div');
-        alert.className = 'alert alert-success alert-dismissible fade show';
-        alert.innerHTML = `
-          Frase excluída com sucesso!
-          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        `;
-        document.body.prepend(alert);
-
-        // Auto-dismiss after 3 seconds
-        setTimeout(() => {
-          if (alert.parentNode) {
-            alert.remove();
-          }
-        }, 3000);
-      } else {
-        const error = await response.json();
-        alert('Erro ao excluir frase: ' + error.error);
-      }
-    } catch (error) {
-      alert('Erro ao excluir frase: ' + error.message);
-    }
-  }
-}
-</script>

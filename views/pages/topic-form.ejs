@@ -24,12 +24,7 @@
               <button type="submit" class="btn btn-primary">
                 <%= topic ? 'Atualizar' : 'Criar' %> Tópico
               </button>
-              <% if (topic) { %>
-                <button type="button" class="btn btn-danger ms-2" onclick="deleteTopic()">
-                  Excluir Tópico
-                </button>
-              <% } %>
-              <a href="/authors-topics" class="btn btn-secondary ms-2">Cancelar</a>
+              <a href="/authors-topics" class="btn btn-secondary">Cancelar</a>
             </div>
           </form>
         </div>
@@ -80,27 +75,4 @@ document.getElementById('topicForm').addEventListener('submit', async (e) => {
     document.getElementById('topicForm').insertBefore(alertDiv, document.querySelector('.mb-3'));
   }
 });
-
-// Function to delete topic
-async function deleteTopic() {
-  <% if (topic) { %>
-    if (confirm('Tem certeza que deseja excluir este tópico? Esta ação não pode ser desfeita e todas as associações com frases serão removidas.')) {
-      try {
-        const response = await fetch('/api/topics/<%= topic.id %>', {
-          method: 'DELETE'
-        });
-
-        if (response.ok) {
-          alert('Tópico excluído com sucesso!');
-          window.location.href = '/authors-topics';
-        } else {
-          const error = await response.json();
-          alert('Erro ao excluir tópico: ' + error.error);
-        }
-      } catch (error) {
-        alert('Erro ao excluir tópico: ' + error.message);
-      }
-    }
-  <% } %>
-}
 </script>
