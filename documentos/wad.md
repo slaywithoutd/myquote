@@ -11,7 +11,6 @@
 1. [Introdução](#c1)   
 2. [Projeto Técnico da Aplicação Web](#c2)  
 3. [Desenvolvimento da Aplicação Web](#c3)  
-4. [Referências](#c4)  
 
 <br>
 
@@ -524,23 +523,76 @@ O frontend do MyQuote foi desenvolvido com foco na experiência do usuário, imp
 
 ---
 
-## <a name="c4"></a>3. Desenvolvimento da Aplicação Web (Semana 8)
+## <a name="c4"></a>3. Desenvolvimento da Aplicação Web
 
 ### 3.1 Demonstração do Sistema Web (Semana 8)
 
-*VIDEO: Insira o link do vídeo demonstrativo nesta seção*
-*Descreva e ilustre aqui o desenvolvimento do sistema web completo, explicando brevemente o que foi entregue em termos de código e sistema. Utilize prints de tela para ilustrar.*
+[*Link do Video Demonstração*](https://drive.google.com/file/d/19tEZiV7sGcgyjcJdjlNUu-pkv3ulZQLU/view?usp=sharing)
 
-### 3.2 Conclusões e Trabalhos Futuros (Semana 8)
+O sistema MyQuote foi desenvolvido como uma aplicação web completa para gerenciamento de citações, implementando todas as funcionalidades planejadas na arquitetura MVC. O desenvolvimento foi motivado por uma necessidade pessoal real - a organização de citações coletadas ao longo do tempo.
 
-*Indique pontos fortes e pontos a melhorar de maneira geral.*
-*Relacione também quaisquer outras ideias que você tenha para melhorias futuras.*
+#### Sistema Implementado:
+- **Autenticação completa**: Sistema de login/registro com validação de email, criptografia bcrypt e gerenciamento de sessões
+- **CRUD completo**: Operações de criar, ler, atualizar e deletar para todas as entidades (usuários, frases, autores, tópicos)
+- **Relacionamentos N:N**: Implementação da relação muitos-para-muitos entre frases e tópicos através de tabela intermediária
+- **Interface responsiva**: Frontend desenvolvido com EJS, Bootstrap e CSS customizado com tema de biblioteca
+- **API RESTful**: Endpoints organizados seguindo padrões REST com métodos HTTP apropriados
 
+#### Funcionalidades Principais Entregues:
+1. **Página inicial** com listagem de frases recentes ordenadas por data
+2. **Sistema de autenticação** com validação de formato de email e verificação segura de senhas
+3. **Formulários dinâmicos** para criação/edição de frases com seleção múltipla de tópicos
+4. **Página de gerenciamento** de autores e tópicos com visualização de frases associadas
+5. **Operações CRUD** completas para todas as frases, autores e tópicos do sistema
 
+#### Processo de Desenvolvimento e Aprendizados:
 
-## <a name="c5"></a>4. Referências
+O desenvolvimento me permitiu aprender sobre arquitetura MVC na prática, especialmente na implementação dos relacionamentos N:N entre frases e tópicos, que exigiu criar uma tabela intermediária no banco de dados e desenvolver formulários que permitissem selecionar múltiplos tópicos para cada frase. A configuração do banco de dados com retry logic também se mostrou fundamental para lidar com falhas de conexão em ambiente de produção.
 
-_Incluir as principais referências de seu projeto, para que o leitor possa consultar caso ele se interessar em aprofundar._<br>
+Um desafio específico foi fazer o nome do autor aparecer corretamente nas frases da página inicial, solucionado através de LEFT JOIN entre as tabelas quotes e authors, garantindo que frases sem autor também fossem exibidas.
 
----
----
+#### Estrutura de Código Entregue:
+```
+myquote/
+├── controllers/ (4 arquivos) - Lógica de negócio e validação
+├── models/ (4 arquivos) - Acesso ao banco de dados com prepared statements
+├── views/ (15+ arquivos) - Interface EJS com layouts reutilizáveis
+├── routes/ (4 arquivos) - Mapeamento de URLs para controllers
+├── config/ - Configuração robusta do PostgreSQL
+├── tests/ - Testes unitários para models e controllers
+└── public/ - Assets estáticos e CSS customizado
+```
+
+<div align="center">
+<sup>Figura 11 - Tela inicial, seção de frases recentes</sup>
+<img src="/documentos/assets/quotes.png"/>
+<sup>Fonte: Autoria própria, 2025</sup>
+</div>
+
+<div align="center">
+<sup>Figura 12 - Formulário de Login</sup>
+<img src="/documentos/assets/loginform.png"/>
+<sup>Fonte: Autoria própria, 2025</sup>
+</div>
+
+<div align="center">
+<sup>Figura 13 - Formulário de criação de uma nova frase</sup>
+<img src="/documentos/assets/quoteforms.png"/>
+<sup>Fonte: Autoria própria, 2025</sup>
+</div>
+
+<div align="center">
+<sup>Figura 14 - Segunda Página, com os autores e tópicos</sup>
+<img src="/documentos/assets/author-topics.png"/>
+<sup>Fonte: Autoria própria, 2025</sup>
+</div>
+
+### 3.2 Conclusões e Trabalhos Futuros
+
+Esse projeto não surgiu atoa. Tenho a mania de guardar frases que vejo/ouço por ai, gosto de me chamar de "quote collector". Quando vi a oportunidade de transformar esse meu hábito em um projeto, fiquei animada. Honestamente, acho que o ponto forte é o meu apego emocional com o tema do projeto, o que me motiva a realmente usar a aplicação e continuar desenvolvendo ela.
+
+Mas quando se trata de pontos a melhorar, ainda tem muita coisa. Dentre as principais, não sou a maior fã de como ficou o design final. Gostaria que a minha aplicação tivesse opções de por exemplo, trocar o tema (ligh/dark mode), talvez também a possibilidade de trocar a linguagem. Por ultimo, sinto falta de mais funcionalidades, como a busca por frases e a filtragem por autores e tópicos.
+
+Além disso, o processo mostrou que a motivação pessoal pode criar "pontos cegos" que dificultou a avaliação crítica da qualidade técnica. Para melhorar o projeto no futuro, preciso trabalhar melhor na validação dos dados que o usuário digita e padronizar as mensagens de erro, que hoje estão meio bagunçadas entre as diferentes partes do código.
+
+:D
