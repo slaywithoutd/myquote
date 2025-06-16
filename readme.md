@@ -44,17 +44,14 @@ Crie um arquivo `.env` na raiz do projeto com as seguintes variáveis de ambient
 
 ```env
 # Configurações do Banco de Dados
-DB_HOST=localhost
-DB_PORT=5432
-DB_DATABASE=myquote_db
-DB_USER=seu_usuario_postgres
+DB_HOST=aws-0-us-east-2.pooler.supabase.com
+DB_PORT=5500
+DB_DATABASE=postgres
+DB_USER=postgres.sbtoghyuuysiyzaffrck
 DB_PASSWORD=sua_senha_postgres
+DB_SSL=true
 
-# Configurações do Servidor
-PORT=5500
 ```
-
-**Importante**: Substitua os valores pelos dados do seu ambiente PostgreSQL.
 
 ## Configuração do Banco de Dados
 
@@ -122,7 +119,6 @@ Abra seu navegador e acesse: **http://localhost:3000**
 - **Nova Frase:** Adicione frases com autor e tópicos
 - **Gerenciar Autores:** Cadastre e edite informações de autores
 - **Gerenciar Tópicos:** Organize suas frases por categorias
-- **Filtros:** Busque frases por autor ou tópico
 
 ## Funcionalidades
 
@@ -131,9 +127,7 @@ Abra seu navegador e acesse: **http://localhost:3000**
 * **Exclusão de Frases:** Permite remover frases cadastradas com confirmação de segurança.
 * **Gerenciamento de Autores:** Cadastro, edição e exclusão de autores com informações detalhadas (nome, nacionalidade, biografia).
 * **Gerenciamento de Tópicos:** Criação, edição e exclusão de tópicos para categorização das frases.
-* **Consulta e Filtragem:** Busca e filtragem de frases por autor, tópico ou palavras-chave.
 * **Autenticação de Usuários:** Sistema de login seguro para garantir que apenas usuários autenticados possam gerenciar suas frases.
-* **Interface Responsiva:** Design intuitivo com tema de biblioteca para facilitar a navegação e o uso da aplicação.
 
 ## Scripts Disponíveis
 
